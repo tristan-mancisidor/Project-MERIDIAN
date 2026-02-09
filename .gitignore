@@ -1,0 +1,36 @@
+# Environment & secrets
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+secrets/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependencies
+node_modules/
+vendor/
+.cache/
+
+# Build output
+dist/
+build/
+*.min.js
+*.min.css
+
+# Logs
+*.log
+logs/
+
+# API keys (never commit)
+integrations/**/api-keys.*
+config/production.*

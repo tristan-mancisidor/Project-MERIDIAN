@@ -1,0 +1,112 @@
+{
+  "integrations": {
+    "zocks_ai": {
+      "name": "Zocks AI",
+      "purpose": "Meeting transcription and notes",
+      "status": "not_configured",
+      "auth_method": "api_key",
+      "base_url": null,
+      "endpoints": {
+        "transcribe": "/api/v1/transcribe",
+        "summary": "/api/v1/summary",
+        "action_items": "/api/v1/action-items"
+      },
+      "webhooks": {
+        "transcription_complete": "/webhooks/zocks/transcription-complete"
+      },
+      "data_flow": "Zocks -> Document Management -> CRM"
+    },
+    "emoney_advisor": {
+      "name": "eMoney Advisor",
+      "purpose": "Financial planning software",
+      "status": "not_configured",
+      "auth_method": "oauth2",
+      "base_url": null,
+      "endpoints": {
+        "clients": "/api/v1/clients",
+        "plans": "/api/v1/plans",
+        "goals": "/api/v1/goals",
+        "net_worth": "/api/v1/net-worth",
+        "cash_flow": "/api/v1/cash-flow"
+      },
+      "sync_frequency": "daily",
+      "data_flow": "Client Portal <-> eMoney <-> Agent System"
+    },
+    "orion": {
+      "name": "Orion Portfolio Solutions",
+      "purpose": "Portfolio management and reporting",
+      "status": "not_configured",
+      "auth_method": "oauth2",
+      "base_url": null,
+      "endpoints": {
+        "portfolios": "/api/v1/portfolios",
+        "performance": "/api/v1/performance",
+        "rebalance": "/api/v1/rebalance",
+        "billing": "/api/v1/billing",
+        "reports": "/api/v1/reports"
+      },
+      "sync_frequency": "real_time",
+      "data_flow": "Custodian -> Orion -> Client Portal + Agent System"
+    },
+    "salesforce": {
+      "name": "Salesforce CRM",
+      "purpose": "Client relationship management",
+      "status": "not_configured",
+      "auth_method": "oauth2",
+      "base_url": null,
+      "endpoints": {
+        "contacts": "/services/data/v59.0/sobjects/Contact",
+        "accounts": "/services/data/v59.0/sobjects/Account",
+        "tasks": "/services/data/v59.0/sobjects/Task",
+        "activities": "/services/data/v59.0/sobjects/Activity"
+      },
+      "custom_objects": [
+        "Financial_Plan__c",
+        "Portfolio_Review__c",
+        "Compliance_Note__c",
+        "Meeting_Summary__c"
+      ],
+      "data_flow": "All Agents -> Salesforce (activity logging)"
+    },
+    "fidelity": {
+      "name": "Fidelity Wealthscape",
+      "purpose": "Custody and trading",
+      "status": "not_configured",
+      "auth_method": "oauth2",
+      "base_url": null,
+      "endpoints": {
+        "accounts": "/api/v1/accounts",
+        "positions": "/api/v1/positions",
+        "orders": "/api/v1/orders",
+        "documents": "/api/v1/documents",
+        "balances": "/api/v1/balances"
+      },
+      "sync_frequency": "real_time",
+      "data_flow": "Agent System -> Fidelity (trades) | Fidelity -> Orion (data)"
+    },
+    "schwab": {
+      "name": "Charles Schwab Advisor Services",
+      "purpose": "Custody and trading (secondary)",
+      "status": "not_configured",
+      "auth_method": "oauth2",
+      "base_url": null,
+      "endpoints": {
+        "accounts": "/api/v1/accounts",
+        "positions": "/api/v1/positions",
+        "orders": "/api/v1/orders",
+        "documents": "/api/v1/documents",
+        "balances": "/api/v1/balances"
+      },
+      "sync_frequency": "real_time",
+      "data_flow": "Agent System -> Schwab (trades) | Schwab -> Orion (data)"
+    }
+  },
+  "security": {
+    "api_key_rotation_days": 90,
+    "oauth_token_expiry_minutes": 60,
+    "rate_limit_per_minute": 100,
+    "tls_minimum_version": "1.3",
+    "audit_logging": true,
+    "ip_whitelist_enabled": true
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MeridianClientProfile",
+  "description": "Unified client profile schema shared across all agent teams.",
+  "type": "object",
+  "required": ["client_id", "personal", "financial", "goals", "preferences"],
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "Unique client identifier"
+    },
+    "personal": {
+      "type": "object",
+      "required": ["name", "date_of_birth", "marital_status"],
+      "properties": {
+        "name": { "type": "string" },
+        "date_of_birth": { "type": "string", "format": "date" },
+        "marital_status": {
+          "type": "string",
+          "enum": ["single", "married", "divorced", "widowed", "domestic_partnership"]
+        },
+        "dependents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "age": { "type": "integer" },
+              "relationship": { "type": "string" }
+            }
+          }
+        },
+        "occupation": { "type": "string" },
+        "employer": { "type": "string" },
+        "state_of_residence": { "type": "string" },
+        "risk_tolerance": {
+          "type": "string",
+          "enum": ["conservative", "moderately_conservative", "moderate", "moderately_aggressive", "aggressive"]
+        },
+        "investment_experience": {
+          "type": "string",
+          "enum": ["none", "beginner", "intermediate", "advanced"]
+        }
+      }
+    },
+    "financial": {
+      "type": "object",
+      "properties": {
+        "annual_income": { "type": "number" },
+        "annual_expenses": { "type": "number" },
+        "tax_filing_status": {
+          "type": "string",
+          "enum": ["single", "married_filing_jointly", "married_filing_separately", "head_of_household"]
+        },
+        "marginal_tax_bracket": { "type": "number" },
+        "assets": {
+          "type": "object",
+          "properties": {
+            "taxable_accounts": { "type": "number" },
+            "retirement_accounts": { "type": "number" },
+            "real_estate_equity": { "type": "number" },
+            "cash_and_equivalents": { "type": "number" },
+            "other_assets": { "type": "number" }
+          }
+        },
+        "liabilities": {
+          "type": "object",
+          "properties": {
+            "mortgage": { "type": "number" },
+            "student_loans": { "type": "number" },
+            "auto_loans": { "type": "number" },
+            "credit_cards": { "type": "number" },
+            "other_debt": { "type": "number" }
+          }
+        },
+        "insurance": {
+          "type": "object",
+          "properties": {
+            "life": { "type": "boolean" },
+            "disability": { "type": "boolean" },
+            "long_term_care": { "type": "boolean" },
+            "umbrella": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["goal_id", "type", "priority"],
+        "properties": {
+          "goal_id": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["retirement", "education", "home_purchase", "debt_payoff", "emergency_fund", "travel", "charitable", "business", "other"]
+          },
+          "description": { "type": "string" },
+          "target_amount": { "type": "number" },
+          "target_date": { "type": "string", "format": "date" },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          },
+          "current_progress": { "type": "number" },
+          "on_track": { "type": "boolean" }
+        }
+      }
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "communication_frequency": {
+          "type": "string",
+          "enum": ["weekly", "biweekly", "monthly", "quarterly"]
+        },
+        "preferred_channel": {
+          "type": "string",
+          "enum": ["email", "chat", "phone", "video"]
+        },
+        "meeting_time_preference": {
+          "type": "string",
+          "enum": ["mornings", "afternoons", "evenings"]
+        },
+        "esg_preference": { "type": "boolean" },
+        "excluded_sectors": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "service_tier": {
+      "type": "string",
+      "enum": ["essential", "premier", "elite", "planning_only"]
+    },
+    "custodian": {
+      "type": "string",
+      "enum": ["fidelity", "schwab"]
+    },
+    "interaction_history": {
+      "type": "object",
+      "properties": {
+        "last_contact_date": { "type": "string", "format": "date" },
+        "last_meeting_date": { "type": "string", "format": "date" },
+        "total_meetings": { "type": "integer" },
+        "satisfaction_score": { "type": "number" },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": { "type": "string", "format": "date-time" },
+              "agent_team": { "type": "string" },
+              "summary": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
