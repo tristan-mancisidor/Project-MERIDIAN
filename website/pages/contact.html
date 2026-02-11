@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contact Meridian Wealth Advisors - schedule a free consultation, send us a message, or learn about our office hours.">
+  <title>Contact | Meridian Wealth Advisors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">Meridian<span>.</span></a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="about.html">About</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="contact.html" class="active">Contact</a></li>
+        </ul>
+      </nav>
+      <a href="contact.html" class="nav-cta">Start Your Plan</a>
+      <button class="menu-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero hero--compact">
+    <div class="container">
+      <h1>Let&rsquo;s Start a Conversation</h1>
+      <p>
+        Whether you&rsquo;re ready to get started or just exploring your options,
+        we&rsquo;re here to help. Reach out and we&rsquo;ll respond within one business day.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact Form + Sidebar -->
+  <section class="section">
+    <div class="container">
+      <div class="contact-layout">
+        <div>
+          <h2 style="margin-bottom: var(--space-8);">Send Us a Message</h2>
+          <form id="contact-form" class="contact-form">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" required placeholder="John Doe">
+              <div class="form-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" required placeholder="john@example.com">
+              <div class="form-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+              <div class="form-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="assets">Investable Assets</label>
+              <select id="assets" name="assets" required>
+                <option value="" disabled selected>Select a range</option>
+                <option value="under-250k">Under $250,000</option>
+                <option value="250k-500k">$250,000 &ndash; $500,000</option>
+                <option value="500k-1m">$500,000 &ndash; $1,000,000</option>
+                <option value="1m-2m">$1,000,000 &ndash; $2,000,000</option>
+                <option value="2m-5m">$2,000,000 &ndash; $5,000,000</option>
+                <option value="5m-plus">$5,000,000+</option>
+              </select>
+              <div class="form-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="message">How can we help you?</label>
+              <textarea id="message" name="message" required placeholder="Tell us about your financial goals and how we can help..."></textarea>
+              <div class="form-error"></div>
+            </div>
+            <button type="submit" class="btn btn--primary btn--lg" style="width: 100%;">Send Message</button>
+          </form>
+        </div>
+
+        <div class="contact-sidebar">
+          <h3>Get in Touch</h3>
+          <div class="contact-info-item">
+            <h4>Email</h4>
+            <p>hello@meridianwealthadvisors.com</p>
+          </div>
+          <div class="contact-info-item">
+            <h4>Phone</h4>
+            <p>(888) 555-PLAN</p>
+          </div>
+          <div class="contact-info-item">
+            <h4>Office Hours</h4>
+            <p>Monday &ndash; Friday: 8:00 AM &ndash; 6:00 PM ET</p>
+            <p>AI Chat Support: 24/7</p>
+          </div>
+          <div class="contact-info-item">
+            <h4>Response Time</h4>
+            <p>We respond to all inquiries within one business day. Chat support is available around the clock.</p>
+          </div>
+          <div class="contact-info-item" style="margin-bottom: 0;">
+            <h4>Video Consultation</h4>
+            <p>Prefer to meet face-to-face? Schedule a free video consultation during business hours.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scheduling CTA -->
+  <section class="section section--navy">
+    <div class="container" style="text-align:center;">
+      <h2>Prefer a Video Consultation?</h2>
+      <p style="max-width:560px; margin: var(--space-6) auto var(--space-10); color: var(--color-slate-light); font-size: var(--text-lg);">
+        Schedule a free 30-minute video call with our AI advisory team. We&rsquo;ll
+        discuss your financial situation, answer your questions, and outline a plan
+        tailored to your goals.
+      </p>
+      <a href="#" class="btn btn--primary btn--lg">Schedule Video Call</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">Meridian<span>.</span></div>
+          <p>AI-powered fiduciary financial planning and investment management.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="services.html">Financial Planning</a></li>
+            <li><a href="services.html">Investment Management</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="how-it-works.html">How It Works</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="disclosures.html">Disclosures</a></li>
+            <li><a href="disclosures.html#form-adv">Form ADV</a></li>
+            <li><a href="disclosures.html#form-crs">Form CRS</a></li>
+            <li><a href="disclosures.html#privacy">Privacy Policy</a></li>
+            <li><a href="disclosures.html#terms">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Meridian Wealth Advisors, LLC. All rights reserved.</span>
+        <span>SEC Registered Investment Advisor</span>
+      </div>
+      <div class="footer-disclosures">
+        <p>
+          Meridian Wealth Advisors, LLC is a registered investment advisor.
+          Advisory services are provided by AI-powered systems with human oversight.
+          Registration does not imply a certain level of skill or training.
+          Past performance is not indicative of future results. Investing involves risk,
+          including potential loss of principal. Please review our
+          <a href="disclosures.html">full disclosures</a> and
+          <a href="disclosures.html#form-adv">Form ADV Part 2A</a> for important information.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
