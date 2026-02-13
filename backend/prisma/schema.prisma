@@ -1,0 +1,604 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// 1. USER (Advisors, Admins, Staff)
+// ============================================
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  firstName     String    @map("first_name")
+  lastName      String    @map("last_name")
+  role          UserRole  @default(ADVISOR)
+  isActive      Boolean   @default(true) @map("is_active")
+  lastLoginAt   DateTime? @map("last_login_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  clients          Client[]
+  assignedTasks    Task[]           @relation("TaskAssignee")
+  createdTasks     Task[]           @relation("TaskCreator")
+  sentMessages     Message[]        @relation("MessageSender")
+  auditLogs        AuditLog[]
+  aiInteractions   AIInteraction[]
+  meetings         Meeting[]        @relation("MeetingAdvisor")
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  ADVISOR
+  SUPPORT
+  COMPLIANCE
+}
+
+// ============================================
+// 2. CLIENT
+// ============================================
+model Client {
+  id              String       @id @default(uuid())
+  email           String       @unique
+  passwordHash    String       @map("password_hash")
+  firstName       String       @map("first_name")
+  lastName        String       @map("last_name")
+  phone           String?
+  dateOfBirth     DateTime?    @map("date_of_birth")
+  status          ClientStatus @default(PROSPECT)
+  serviceTier     ServiceTier  @default(ESSENTIAL) @map("service_tier")
+  custodian       Custodian    @default(FIDELITY)
+  advisorId       String?      @map("advisor_id")
+  onboardedAt     DateTime?    @map("onboarded_at")
+  isActive        Boolean      @default(true) @map("is_active")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  advisor          User?            @relation(fields: [advisorId], references: [id])
+  profile          ClientProfile?
+  financialPlans   FinancialPlan[]
+  goals            Goal[]
+  accounts         Account[]
+  documents        Document[]
+  conversations    Conversation[]
+  tasks            Task[]
+  notifications    Notification[]
+  meetings         Meeting[]
+  feeSchedule      FeeSchedule?
+  complianceChecks ComplianceCheck[]
+  aiInteractions   AIInteraction[]
+
+  @@map("clients")
+}
+
+enum ClientStatus {
+  PROSPECT
+  ONBOARDING
+  ACTIVE
+  INACTIVE
+  TERMINATED
+}
+
+enum ServiceTier {
+  ESSENTIAL
+  PREMIER
+  ELITE
+  PLANNING_ONLY
+}
+
+enum Custodian {
+  FIDELITY
+  SCHWAB
+}
+
+// ============================================
+// 3. CLIENT PROFILE (Extended financial details)
+// ============================================
+model ClientProfile {
+  id                    String   @id @default(uuid())
+  clientId              String   @unique @map("client_id")
+  maritalStatus         String?  @map("marital_status")
+  dependents            Json?    // [{name, age, relationship}]
+  occupation            String?
+  employer              String?
+  stateOfResidence      String?  @map("state_of_residence")
+  riskTolerance         RiskTolerance @default(MODERATE) @map("risk_tolerance")
+  investmentExperience  String?  @map("investment_experience")
+  annualIncome          Decimal? @map("annual_income") @db.Decimal(15, 2)
+  annualExpenses        Decimal? @map("annual_expenses") @db.Decimal(15, 2)
+  taxFilingStatus       String?  @map("tax_filing_status")
+  marginalTaxBracket    Decimal? @map("marginal_tax_bracket") @db.Decimal(5, 2)
+  totalAssets           Decimal? @map("total_assets") @db.Decimal(15, 2)
+  totalLiabilities      Decimal? @map("total_liabilities") @db.Decimal(15, 2)
+  netWorth              Decimal? @map("net_worth") @db.Decimal(15, 2)
+  assetBreakdown        Json?    @map("asset_breakdown")     // {taxable, retirement, real_estate, cash, other}
+  liabilityBreakdown    Json?    @map("liability_breakdown")  // {mortgage, student, auto, credit, other}
+  insuranceCoverage     Json?    @map("insurance_coverage")   // {life, disability, ltc, umbrella}
+  communicationPrefs    Json?    @map("communication_prefs")  // {frequency, channel, time}
+  esgPreference         Boolean  @default(false) @map("esg_preference")
+  excludedSectors       String[] @map("excluded_sectors")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("client_profiles")
+}
+
+enum RiskTolerance {
+  CONSERVATIVE
+  MODERATELY_CONSERVATIVE
+  MODERATE
+  MODERATELY_AGGRESSIVE
+  AGGRESSIVE
+}
+
+// ============================================
+// 4. FINANCIAL PLAN
+// ============================================
+model FinancialPlan {
+  id               String           @id @default(uuid())
+  clientId         String           @map("client_id")
+  name             String
+  status           PlanStatus       @default(DRAFT)
+  planType         String           @map("plan_type") // comprehensive, retirement, education, estate
+  summary          String?          @db.Text
+  assumptions      Json?            // inflation, returns, life expectancy, etc.
+  projections      Json?            // year-by-year projections
+  recommendations  Json?            // array of recommendations
+  retirementScore  Int?             @map("retirement_score") // 0-100
+  lastReviewedAt   DateTime?        @map("last_reviewed_at")
+  nextReviewAt     DateTime?        @map("next_review_at")
+  approvedAt       DateTime?        @map("approved_at")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("financial_plans")
+}
+
+enum PlanStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  ACTIVE
+  ARCHIVED
+}
+
+// ============================================
+// 5. GOAL
+// ============================================
+model Goal {
+  id              String       @id @default(uuid())
+  clientId        String       @map("client_id")
+  type            GoalType
+  name            String
+  description     String?      @db.Text
+  targetAmount    Decimal      @map("target_amount") @db.Decimal(15, 2)
+  currentAmount   Decimal      @default(0) @map("current_amount") @db.Decimal(15, 2)
+  targetDate      DateTime     @map("target_date")
+  priority        GoalPriority @default(MEDIUM)
+  progress        Decimal      @default(0) @db.Decimal(5, 2) // percentage 0-100
+  isOnTrack       Boolean      @default(true) @map("is_on_track")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("goals")
+}
+
+enum GoalType {
+  RETIREMENT
+  EDUCATION
+  HOME_PURCHASE
+  DEBT_PAYOFF
+  EMERGENCY_FUND
+  TRAVEL
+  CHARITABLE
+  BUSINESS
+  OTHER
+}
+
+enum GoalPriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+// ============================================
+// 6. ACCOUNT (Investment accounts)
+// ============================================
+model Account {
+  id              String      @id @default(uuid())
+  clientId        String      @map("client_id")
+  accountNumber   String      @unique @map("account_number")
+  accountType     AccountType @map("account_type")
+  accountName     String      @map("account_name")
+  custodian       Custodian
+  currentValue    Decimal     @default(0) @map("current_value") @db.Decimal(15, 2)
+  costBasis       Decimal     @default(0) @map("cost_basis") @db.Decimal(15, 2)
+  ytdReturn       Decimal     @default(0) @map("ytd_return") @db.Decimal(8, 4)
+  inceptionDate   DateTime?   @map("inception_date")
+  isActive        Boolean     @default(true) @map("is_active")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  client       Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  holdings     Holding[]
+  transactions Transaction[]
+
+  @@map("accounts")
+}
+
+enum AccountType {
+  INDIVIDUAL
+  JOINT
+  TRADITIONAL_IRA
+  ROTH_IRA
+  SEP_IRA
+  ROLLOVER_IRA
+  TRUST
+  ESTATE
+  CUSTODIAL
+  EDUCATION_529
+  HSA
+  CORPORATE
+}
+
+// ============================================
+// 7. HOLDING (Individual positions)
+// ============================================
+model Holding {
+  id            String   @id @default(uuid())
+  accountId     String   @map("account_id")
+  symbol        String
+  name          String
+  assetClass    String   @map("asset_class") // equity, fixed_income, alternatives, cash
+  quantity      Decimal  @db.Decimal(15, 6)
+  costBasis     Decimal  @map("cost_basis") @db.Decimal(15, 2)
+  currentPrice  Decimal  @map("current_price") @db.Decimal(15, 4)
+  marketValue   Decimal  @map("market_value") @db.Decimal(15, 2)
+  gainLoss      Decimal  @map("gain_loss") @db.Decimal(15, 2)
+  gainLossPct   Decimal  @map("gain_loss_pct") @db.Decimal(8, 4)
+  weight        Decimal  @db.Decimal(5, 2) // portfolio percentage
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("holdings")
+}
+
+// ============================================
+// 8. TRANSACTION
+// ============================================
+model Transaction {
+  id              String          @id @default(uuid())
+  accountId       String          @map("account_id")
+  type            TransactionType
+  symbol          String?
+  description     String
+  quantity        Decimal?        @db.Decimal(15, 6)
+  price           Decimal?        @db.Decimal(15, 4)
+  amount          Decimal         @db.Decimal(15, 2)
+  fees            Decimal         @default(0) @db.Decimal(10, 2)
+  executedAt      DateTime        @map("executed_at")
+  settledAt       DateTime?       @map("settled_at")
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("transactions")
+}
+
+enum TransactionType {
+  BUY
+  SELL
+  DIVIDEND
+  INTEREST
+  DEPOSIT
+  WITHDRAWAL
+  FEE
+  TRANSFER
+  REBALANCE
+  TAX_LOSS_HARVEST
+}
+
+// ============================================
+// 9. DOCUMENT
+// ============================================
+model Document {
+  id          String       @id @default(uuid())
+  clientId    String       @map("client_id")
+  name        String
+  type        DocumentType
+  category    String       // statements, tax, legal, correspondence
+  fileUrl     String       @map("file_url")
+  fileSize    Int?         @map("file_size") // bytes
+  mimeType    String?      @map("mime_type")
+  description String?      @db.Text
+  isArchived  Boolean      @default(false) @map("is_archived")
+  uploadedBy  String?      @map("uploaded_by") // user or client id
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
+
+enum DocumentType {
+  STATEMENT
+  TAX_FORM
+  CONTRACT
+  IPS
+  FINANCIAL_PLAN
+  REPORT
+  CORRESPONDENCE
+  COMPLIANCE
+  OTHER
+}
+
+// ============================================
+// 10. CONVERSATION
+// ============================================
+model Conversation {
+  id          String             @id @default(uuid())
+  clientId    String             @map("client_id")
+  subject     String
+  status      ConversationStatus @default(OPEN)
+  channel     String             @default("portal") // portal, email, sms
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
+
+  client   Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@map("conversations")
+}
+
+enum ConversationStatus {
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+// ============================================
+// 11. MESSAGE
+// ============================================
+model Message {
+  id              String    @id @default(uuid())
+  conversationId  String    @map("conversation_id")
+  senderId        String?   @map("sender_id") // null for system messages
+  senderType      SenderType @map("sender_type")
+  content         String    @db.Text
+  isRead          Boolean   @default(false) @map("is_read")
+  attachments     Json?     // [{name, url, type}]
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User?        @relation("MessageSender", fields: [senderId], references: [id])
+
+  @@map("messages")
+}
+
+enum SenderType {
+  CLIENT
+  ADVISOR
+  SYSTEM
+  AI_AGENT
+}
+
+// ============================================
+// 12. TASK
+// ============================================
+model Task {
+  id          String     @id @default(uuid())
+  clientId    String?    @map("client_id")
+  assigneeId  String?    @map("assignee_id")
+  creatorId   String?    @map("creator_id")
+  title       String
+  description String?    @db.Text
+  status      TaskStatus @default(PENDING)
+  priority    TaskPriority @default(MEDIUM)
+  category    String?     // review, compliance, client_action, admin
+  dueDate     DateTime?  @map("due_date")
+  completedAt DateTime?  @map("completed_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  client   Client? @relation(fields: [clientId], references: [id])
+  assignee User?   @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  creator  User?   @relation("TaskCreator", fields: [creatorId], references: [id])
+
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// ============================================
+// 13. AUDIT LOG
+// ============================================
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?  @map("user_id")
+  action      String   // CREATE, UPDATE, DELETE, LOGIN, etc.
+  entity      String   // client, account, transaction, etc.
+  entityId    String?  @map("entity_id")
+  details     Json?    // before/after values
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([entity, entityId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ============================================
+// 14. COMPLIANCE CHECK
+// ============================================
+model ComplianceCheck {
+  id          String           @id @default(uuid())
+  clientId    String?          @map("client_id")
+  checkType   String           @map("check_type") // suitability, concentration, risk_limit
+  status      ComplianceStatus @default(PENDING)
+  description String           @db.Text
+  details     Json?            // check parameters and results
+  resolvedBy  String?          @map("resolved_by")
+  resolvedAt  DateTime?        @map("resolved_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  client Client? @relation(fields: [clientId], references: [id])
+
+  @@map("compliance_checks")
+}
+
+enum ComplianceStatus {
+  PENDING
+  PASSED
+  FLAGGED
+  RESOLVED
+  OVERRIDDEN
+}
+
+// ============================================
+// 15. AI INTERACTION
+// ============================================
+model AIInteraction {
+  id            String   @id @default(uuid())
+  userId        String?  @map("user_id")
+  clientId      String?  @map("client_id")
+  agentType     String   @map("agent_type") // financial_planning, investment, compliance, client_support, marketing
+  prompt        String   @db.Text
+  response      String   @db.Text
+  model         String   // claude-sonnet-4-5-20250929, etc.
+  tokensUsed    Int?     @map("tokens_used")
+  latencyMs     Int?     @map("latency_ms")
+  wasApproved   Boolean? @map("was_approved")
+  complianceFlag Boolean @default(false) @map("compliance_flag")
+  metadata      Json?    // extra context
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user   User?   @relation(fields: [userId], references: [id])
+  client Client? @relation(fields: [clientId], references: [id])
+
+  @@index([agentType])
+  @@index([clientId])
+  @@map("ai_interactions")
+}
+
+// ============================================
+// 16. NOTIFICATION
+// ============================================
+model Notification {
+  id          String           @id @default(uuid())
+  clientId    String           @map("client_id")
+  type        NotificationType
+  title       String
+  message     String           @db.Text
+  isRead      Boolean          @default(false) @map("is_read")
+  actionUrl   String?          @map("action_url")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId, isRead])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  PORTFOLIO_UPDATE
+  DOCUMENT_READY
+  TASK_ASSIGNED
+  MESSAGE_RECEIVED
+  MEETING_REMINDER
+  COMPLIANCE_ALERT
+  SYSTEM
+}
+
+// ============================================
+// 17. MEETING
+// ============================================
+model Meeting {
+  id          String        @id @default(uuid())
+  clientId    String        @map("client_id")
+  advisorId   String        @map("advisor_id")
+  title       String
+  description String?       @db.Text
+  type        MeetingType   @default(REVIEW)
+  status      MeetingStatus @default(SCHEDULED)
+  startTime   DateTime      @map("start_time")
+  endTime     DateTime      @map("end_time")
+  location    String?       // virtual link or address
+  notes       String?       @db.Text
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  client  Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  advisor User   @relation("MeetingAdvisor", fields: [advisorId], references: [id])
+
+  @@map("meetings")
+}
+
+enum MeetingType {
+  DISCOVERY
+  ONBOARDING
+  REVIEW
+  PLANNING
+  AD_HOC
+}
+
+enum MeetingStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+// ============================================
+// 18. FEE SCHEDULE
+// ============================================
+model FeeSchedule {
+  id                String   @id @default(uuid())
+  clientId          String   @unique @map("client_id")
+  feeType           String   @map("fee_type") // aum_percentage, flat_fee, hourly
+  aumRate           Decimal? @map("aum_rate") @db.Decimal(5, 4) // e.g., 0.0075 for 0.75%
+  flatFeeAmount     Decimal? @map("flat_fee_amount") @db.Decimal(10, 2)
+  billingFrequency  String   @default("quarterly") @map("billing_frequency")
+  minimumFee        Decimal? @map("minimum_fee") @db.Decimal(10, 2)
+  lastBilledAt      DateTime? @map("last_billed_at")
+  nextBillingDate   DateTime? @map("next_billing_date")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("fee_schedules")
+}
