@@ -95,7 +95,7 @@ router.put(
     const { role, isActive } = req.body;
 
     const user = await prisma.user.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: {
         ...(role && { role }),
         ...(isActive !== undefined && { isActive }),
@@ -173,7 +173,7 @@ router.post(
     const { status, notes } = req.body;
 
     const check = await prisma.complianceCheck.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: {
         status: status || 'RESOLVED',
         resolvedBy: req.user!.id,

@@ -44,7 +44,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const account = await prisma.account.findUnique({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       include: {
         holdings: { orderBy: { weight: 'desc' } },
         transactions: { orderBy: { executedAt: 'desc' }, take: 50 },
@@ -91,7 +91,7 @@ router.put(
 
     const { accountName, currentValue, isActive } = req.body;
     const account = await prisma.account.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: {
         ...(accountName && { accountName }),
         ...(currentValue !== undefined && { currentValue }),
@@ -113,12 +113,12 @@ router.get(
   '/holdings/:accountId',
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const account = await prisma.account.findUnique({ where: { id: req.params.accountId } });
+    const account = await prisma.account.findUnique({ where: { id: qs(req.params.accountId) } });
     if (!account) throw new NotFoundError('Account');
     if (req.user!.type === 'client' && account.clientId !== req.user!.id) throw new ForbiddenError();
 
     const holdings = await prisma.holding.findMany({
-      where: { accountId: req.params.accountId },
+      where: { accountId: qs(req.params.accountId) },
       orderBy: { weight: 'desc' },
     });
 
@@ -203,7 +203,7 @@ router.get(
   '/portfolio-summary/:clientId',
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { clientId } = req.params;
+    const clientId = qs(req.params.clientId);
     if (req.user!.type === 'client' && req.user!.id !== clientId) throw new ForbiddenError();
 
     const accounts = await prisma.account.findMany({

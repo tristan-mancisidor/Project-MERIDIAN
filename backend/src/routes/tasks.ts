@@ -68,7 +68,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const task = await prisma.task.findUnique({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       include: {
         client: { select: { id: true, firstName: true, lastName: true } },
         assignee: { select: { id: true, firstName: true, lastName: true } },
@@ -133,7 +133,7 @@ router.put(
     const data = updateTaskSchema.parse(req.body);
 
     const task = await prisma.task.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: {
         ...data,
         ...(data.dueDate && { dueDate: new Date(data.dueDate) }),
@@ -158,11 +158,11 @@ router.delete(
     if (req.user!.type === 'client') throw new ForbiddenError();
 
     await prisma.task.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: { status: 'CANCELLED' },
     });
 
-    await createAuditLog(req.user!.id, 'CANCEL', 'task', req.params.id, null, req);
+    await createAuditLog(req.user!.id, 'CANCEL', 'task', qs(req.params.id) ?? null, null, req);
     res.json({ message: 'Task cancelled' });
   })
 );
@@ -250,7 +250,7 @@ router.put(
     const { status, notes, location, startTime, endTime } = req.body;
 
     const meeting = await prisma.meeting.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: {
         ...(status && { status }),
         ...(notes !== undefined && { notes }),
@@ -287,7 +287,7 @@ router.put(
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     await prisma.notification.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: { isRead: true },
     });
     res.json({ message: 'Notification marked as read' });

@@ -73,7 +73,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const doc = await prisma.document.findUnique({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       include: { client: { select: { id: true, firstName: true, lastName: true } } },
     });
     if (!doc) throw new NotFoundError('Document');
@@ -137,7 +137,7 @@ router.put(
 
     const { name, description, category, isArchived } = req.body;
     const document = await prisma.document.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: {
         ...(name && { name }),
         ...(description !== undefined && { description }),
@@ -159,11 +159,11 @@ router.delete(
     if (req.user!.type === 'client') throw new ForbiddenError();
 
     await prisma.document.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: { isArchived: true },
     });
 
-    await createAuditLog(req.user!.id, 'ARCHIVE', 'document', req.params.id, null, req);
+    await createAuditLog(req.user!.id, 'ARCHIVE', 'document', qs(req.params.id) ?? null, null, req);
     res.json({ message: 'Document archived' });
   })
 );

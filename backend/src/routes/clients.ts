@@ -64,7 +64,7 @@ router.get(
   '/:id',
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { id } = req.params;
+    const id = qs(req.params.id);
 
     if (req.user!.type === 'client' && req.user!.id !== id) {
       throw new NotFoundError('Client');
@@ -97,7 +97,7 @@ router.put(
   '/:id',
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { id } = req.params;
+    const id = qs(req.params.id);
     const data = updateClientSchema.parse(req.body);
 
     const client = await prisma.client.update({
@@ -112,7 +112,7 @@ router.put(
       },
     });
 
-    await createAuditLog(req.user!.id, 'UPDATE', 'client', id, data, req);
+    await createAuditLog(req.user!.id, 'UPDATE', 'client', id ?? null, data, req);
     res.json(client);
   })
 );
@@ -122,7 +122,7 @@ router.get(
   '/:id/profile',
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { id } = req.params;
+    const id = qs(req.params.id);
     if (req.user!.type === 'client' && req.user!.id !== id) throw new NotFoundError();
 
     const profile = await prisma.clientProfile.findUnique({ where: { clientId: id } });
@@ -137,7 +137,7 @@ router.put(
   '/:id/profile',
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { id } = req.params;
+    const id = qs(req.params.id);
     const data = updateClientProfileSchema.parse(req.body);
 
     let netWorth: number | undefined;
@@ -159,10 +159,10 @@ router.put(
         ...data,
         ...(netWorth !== undefined && { netWorth }),
       },
-      create: { clientId: id, ...data },
+      create: { clientId: id!, ...data },
     });
 
-    await createAuditLog(req.user!.id, 'UPDATE', 'client_profile', id, data, req);
+    await createAuditLog(req.user!.id, 'UPDATE', 'client_profile', id ?? null, data, req);
     res.json(profile);
   })
 );
@@ -172,7 +172,7 @@ router.get(
   '/:id/dashboard',
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { id } = req.params;
+    const id = qs(req.params.id);
     if (req.user!.type === 'client' && req.user!.id !== id) throw new NotFoundError();
 
     const [client, profile, accounts, goals, tasks, recentTransactions] = await Promise.all([

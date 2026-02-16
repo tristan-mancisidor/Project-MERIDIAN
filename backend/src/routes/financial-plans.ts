@@ -47,7 +47,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const plan = await prisma.financialPlan.findUnique({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       include: { client: { select: { id: true, firstName: true, lastName: true, email: true } } },
     });
     if (!plan) throw new NotFoundError('Financial plan');
@@ -90,7 +90,7 @@ router.put(
 
     const data = updateFinancialPlanSchema.parse(req.body);
     const plan = await prisma.financialPlan.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: {
         ...data,
         ...(data.status === 'APPROVED' && { approvedAt: new Date() }),
@@ -111,11 +111,11 @@ router.delete(
     if (req.user!.type === 'client') throw new ForbiddenError();
 
     await prisma.financialPlan.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: { status: 'ARCHIVED' },
     });
 
-    await createAuditLog(req.user!.id, 'ARCHIVE', 'financial_plan', req.params.id, null, req);
+    await createAuditLog(req.user!.id, 'ARCHIVE', 'financial_plan', qs(req.params.id) ?? null, null, req);
     res.json({ message: 'Financial plan archived' });
   })
 );
@@ -129,7 +129,7 @@ router.get(
   '/goals/:clientId',
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { clientId } = req.params;
+    const clientId = qs(req.params.clientId);
     if (req.user!.type === 'client' && req.user!.id !== clientId) throw new ForbiddenError();
 
     const goals = await prisma.goal.findMany({
@@ -179,7 +179,7 @@ router.put(
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { currentAmount, targetAmount, isOnTrack, ...rest } = req.body;
 
-    const existing = await prisma.goal.findUnique({ where: { id: req.params.id } });
+    const existing = await prisma.goal.findUnique({ where: { id: qs(req.params.id) } });
     if (!existing) throw new NotFoundError('Goal');
 
     const newTarget = targetAmount || Number(existing.targetAmount);
@@ -187,7 +187,7 @@ router.put(
     const progress = Number(((newCurrent / newTarget) * 100).toFixed(2));
 
     const goal = await prisma.goal.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: {
         ...rest,
         ...(currentAmount !== undefined && { currentAmount }),
@@ -206,7 +206,7 @@ router.delete(
   '/goals/:id',
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    await prisma.goal.delete({ where: { id: req.params.id } });
+    await prisma.goal.delete({ where: { id: qs(req.params.id) } });
     res.json({ message: 'Goal deleted' });
   })
 );

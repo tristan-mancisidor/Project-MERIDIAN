@@ -676,9 +676,9 @@ async function main() {
 
   await prisma.message.createMany({
     data: [
-      { conversationId: conv1.id, senderId: client1.id, senderType: 'CLIENT', content: 'Hi James, I wanted to discuss the recent market volatility and how it might affect our portfolio strategy. Should we consider any adjustments?', isRead: true, createdAt: new Date('2025-02-05T10:30:00') },
+      { conversationId: conv1.id, senderType: 'CLIENT', content: 'Hi James, I wanted to discuss the recent market volatility and how it might affect our portfolio strategy. Should we consider any adjustments?', isRead: true, createdAt: new Date('2025-02-05T10:30:00') },
       { conversationId: conv1.id, senderId: advisor1.id, senderType: 'ADVISOR', content: 'Hi Michael, great question. Your portfolio is well-positioned with our diversified allocation. The recent volatility is within normal ranges, and our strategy accounts for these fluctuations. I\'d recommend we discuss this in detail during our Q1 review meeting. Would next week work for you?', isRead: true, createdAt: new Date('2025-02-05T14:15:00') },
-      { conversationId: conv1.id, senderId: client1.id, senderType: 'CLIENT', content: 'That sounds good. I\'m available Tuesday or Thursday afternoon. Also, Jennifer and I have been talking about increasing our 529 contributions. Can we discuss that as well?', isRead: true, createdAt: new Date('2025-02-05T16:45:00') },
+      { conversationId: conv1.id, senderType: 'CLIENT', content: 'That sounds good. I\'m available Tuesday or Thursday afternoon. Also, Jennifer and I have been talking about increasing our 529 contributions. Can we discuss that as well?', isRead: true, createdAt: new Date('2025-02-05T16:45:00') },
       { conversationId: conv1.id, senderId: advisor1.id, senderType: 'ADVISOR', content: 'Absolutely! Let\'s plan for Thursday at 2pm. I\'ll prepare an analysis of different 529 contribution scenarios for Emma and Jack. I\'ll also include the latest portfolio performance report for our review.', isRead: false, createdAt: new Date('2025-02-06T09:00:00') },
     ],
   });
@@ -694,7 +694,7 @@ async function main() {
 
   await prisma.message.createMany({
     data: [
-      { conversationId: conv2.id, senderId: client2.id, senderType: 'CLIENT', content: 'James, David and I would like to explore increasing our charitable contributions this year. Can we set up a call to discuss options?', isRead: true, createdAt: new Date('2025-02-01T11:00:00') },
+      { conversationId: conv2.id, senderType: 'CLIENT', content: 'James, David and I would like to explore increasing our charitable contributions this year. Can we set up a call to discuss options?', isRead: true, createdAt: new Date('2025-02-01T11:00:00') },
       { conversationId: conv2.id, senderId: advisor1.id, senderType: 'ADVISOR', content: 'Of course, Sarah. I\'ve been reviewing your donor-advised fund performance and have some ideas about optimizing your giving strategy for tax efficiency. We could also explore a charitable remainder trust given your portfolio size. I\'ll prepare some options and we can discuss next week.', isRead: true, createdAt: new Date('2025-02-01T15:30:00') },
     ],
   });

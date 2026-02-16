@@ -94,7 +94,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const conversation = await prisma.conversation.findUnique({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       include: {
         client: { select: { id: true, firstName: true, lastName: true } },
         messages: {
@@ -110,7 +110,7 @@ router.get(
     // Mark messages as read
     const senderTypeToMark = req.user!.type === 'client' ? { not: 'CLIENT' as const } : ('CLIENT' as const);
     await prisma.message.updateMany({
-      where: { conversationId: req.params.id, isRead: false, senderType: senderTypeToMark },
+      where: { conversationId: qs(req.params.id), isRead: false, senderType: senderTypeToMark },
       data: { isRead: true },
     });
 
@@ -126,7 +126,7 @@ router.put(
     const { status } = req.body;
 
     const conversation = await prisma.conversation.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: { status },
     });
 
