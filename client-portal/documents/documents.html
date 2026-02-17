@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documents | Meridian Wealth Advisors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/portal.css">
+  <link rel="stylesheet" href="documents.css">
+</head>
+<body class="portal">
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo">Meridian<span class="gold">.</span></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="../dashboard/dashboard.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9632;</span> Dashboard
+      </a>
+      <a href="../portfolio/portfolio.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9650;</span> Portfolio
+      </a>
+      <a href="../financial-plan/plan.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9679;</span> Financial Plan
+      </a>
+      <a href="documents.html" class="sidebar-link active">
+        <span class="sidebar-icon">&#9744;</span> Documents
+      </a>
+      <a href="../communication/messages.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9993;</span> Messages
+      </a>
+      <a href="../settings/settings.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9881;</span> Settings
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="#" class="sidebar-link">Log Out</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="portal-main">
+    <header class="portal-header">
+      <div>
+        <h1 class="portal-greeting">Document Vault</h1>
+        <p class="portal-subtitle">Your financial documents and statements</p>
+      </div>
+      <div class="portal-actions">
+        <button class="btn btn--primary btn--sm" id="upload-btn">Upload Document</button>
+      </div>
+    </header>
+
+    <!-- Filter Tabs -->
+    <div id="filter-tabs" class="filter-tabs"></div>
+
+    <!-- Document List -->
+    <section class="panel">
+      <ul class="document-list" id="document-list">
+        <!-- Populated dynamically -->
+      </ul>
+    </section>
+  </main>
+
+  <!-- Upload Modal -->
+  <div class="modal-overlay" id="upload-modal">
+    <div class="modal">
+      <h2 class="modal-title">Upload Document</h2>
+      <form id="upload-form">
+        <div class="upload-area" id="upload-area">
+          <p>Drag and drop a file here, or click to browse</p>
+          <p style="font-size:var(--text-xs);margin-top:var(--space-2)">PDF, DOC, DOCX, XLS, XLSX, CSV, PNG, JPG (max 25MB)</p>
+          <p class="upload-file-name" id="upload-file-name"></p>
+          <input type="file" id="file-input" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg" hidden>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="doc-name">Document Name</label>
+          <input class="form-input" type="text" id="doc-name" placeholder="e.g. Tax Return 2024">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="doc-category">Category</label>
+          <select class="form-input" id="doc-category">
+            <option value="statements">Statements</option>
+            <option value="tax">Tax</option>
+            <option value="legal">Legal</option>
+            <option value="correspondence" selected>Correspondence</option>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn--outline btn--sm" type="button" id="cancel-upload">Cancel</button>
+          <button class="btn btn--primary btn--sm" type="submit">Upload</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="documents.js"></script>
+  <script type="module" src="../assets/js/ai-chat.js"></script>
+</body>
+</html>

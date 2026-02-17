@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio | Meridian Wealth Advisors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/portal.css">
+  <link rel="stylesheet" href="portfolio.css">
+</head>
+<body class="portal">
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo">Meridian<span class="gold">.</span></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="../dashboard/dashboard.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9632;</span> Dashboard
+      </a>
+      <a href="portfolio.html" class="sidebar-link active">
+        <span class="sidebar-icon">&#9650;</span> Portfolio
+      </a>
+      <a href="../financial-plan/plan.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9679;</span> Financial Plan
+      </a>
+      <a href="../documents/documents.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9744;</span> Documents
+      </a>
+      <a href="../communication/messages.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9993;</span> Messages
+      </a>
+      <a href="../settings/settings.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9881;</span> Settings
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="#" class="sidebar-link">Log Out</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="portal-main">
+    <header class="portal-header">
+      <div>
+        <h1 class="portal-greeting">Portfolio Overview</h1>
+        <p class="portal-subtitle">Your investment accounts and holdings</p>
+      </div>
+    </header>
+
+    <!-- Portfolio Summary -->
+    <section class="portfolio-summary">
+      <div class="metric-card metric-card--highlight">
+        <span class="metric-label">Total Portfolio Value</span>
+        <span class="metric-value" id="total-value">--</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Total Gain/Loss</span>
+        <span class="metric-value" id="total-gain">--</span>
+        <span class="metric-sublabel" id="gain-pct">--</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Accounts</span>
+        <span class="metric-value" id="account-count">--</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Holdings</span>
+        <span class="metric-value" id="holdings-count">--</span>
+      </div>
+    </section>
+
+    <!-- Asset Allocation -->
+    <section class="panel allocation-section">
+      <h2 class="panel-title">Asset Allocation</h2>
+      <div class="allocation-bar-container" id="allocation-bar"></div>
+      <div class="allocation-legend" id="allocation-legend"></div>
+    </section>
+
+    <!-- Account Cards -->
+    <section>
+      <h2 class="panel-title" style="margin-bottom:var(--space-6)">Accounts</h2>
+      <div class="account-cards" id="account-cards">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- Holdings Table -->
+    <section class="panel">
+      <h2 class="panel-title" id="detail-title">Account Holdings</h2>
+      <div style="overflow-x:auto">
+        <table class="holdings-table">
+          <thead>
+            <tr>
+              <th>Holding</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Market Value</th>
+              <th>Cost Basis</th>
+              <th>Gain/Loss</th>
+              <th>Weight</th>
+            </tr>
+          </thead>
+          <tbody id="holdings-body">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Recent Transactions -->
+    <section class="panel">
+      <h2 class="panel-title">Recent Transactions</h2>
+      <ul class="transactions-list" id="transactions-list">
+        <!-- Populated dynamically -->
+      </ul>
+    </section>
+  </main>
+
+  <script type="module" src="portfolio.js"></script>
+  <script type="module" src="../assets/js/ai-chat.js"></script>
+</body>
+</html>

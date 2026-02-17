@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings | Meridian Wealth Advisors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/portal.css">
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body class="portal">
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo">Meridian<span class="gold">.</span></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="../dashboard/dashboard.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9632;</span> Dashboard
+      </a>
+      <a href="../portfolio/portfolio.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9650;</span> Portfolio
+      </a>
+      <a href="../financial-plan/plan.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9679;</span> Financial Plan
+      </a>
+      <a href="../documents/documents.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9744;</span> Documents
+      </a>
+      <a href="../communication/messages.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9993;</span> Messages
+      </a>
+      <a href="settings.html" class="sidebar-link active">
+        <span class="sidebar-icon">&#9881;</span> Settings
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="#" class="sidebar-link">Log Out</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="portal-main">
+    <header class="portal-header">
+      <div>
+        <h1 class="portal-greeting">Settings</h1>
+        <p class="portal-subtitle">Manage your account and preferences</p>
+      </div>
+    </header>
+
+    <!-- Profile Information -->
+    <section class="panel settings-section">
+      <h2 class="panel-title">Profile Information</h2>
+      <div id="profile-info">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- Change Password -->
+    <section class="panel settings-section">
+      <h2 class="panel-title">Change Password</h2>
+      <form class="password-form" id="password-form">
+        <div class="form-group">
+          <label class="form-label" for="current-password">Current Password</label>
+          <input class="form-input" type="password" id="current-password" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-password">New Password</label>
+          <input class="form-input" type="password" id="new-password" minlength="8" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="confirm-password">Confirm New Password</label>
+          <input class="form-input" type="password" id="confirm-password" required>
+        </div>
+        <p class="form-error" id="password-msg"></p>
+        <button class="btn btn--primary btn--sm" type="submit">Update Password</button>
+      </form>
+    </section>
+
+    <!-- Notification Preferences -->
+    <section class="panel settings-section">
+      <h2 class="panel-title">Notification Preferences</h2>
+      <ul class="notification-options">
+        <li class="notification-option">
+          <div class="notification-option-info">
+            <div class="notification-option-title">Portfolio Updates</div>
+            <div class="notification-option-desc">Rebalances, trades, and portfolio changes</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </li>
+        <li class="notification-option">
+          <div class="notification-option-info">
+            <div class="notification-option-title">Document Notifications</div>
+            <div class="notification-option-desc">New documents, reports, and statements</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </li>
+        <li class="notification-option">
+          <div class="notification-option-info">
+            <div class="notification-option-title">Meeting Reminders</div>
+            <div class="notification-option-desc">Upcoming meetings and schedule changes</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </li>
+        <li class="notification-option">
+          <div class="notification-option-info">
+            <div class="notification-option-title">Task Assignments</div>
+            <div class="notification-option-desc">New tasks and action item reminders</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Recent Notifications -->
+    <section class="panel settings-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4)">
+        <h2 class="panel-title" style="margin-bottom:0;border-bottom:none;padding-bottom:0">Recent Notifications</h2>
+        <button class="btn btn--outline btn--sm" id="mark-all-read">Mark All Read</button>
+      </div>
+      <ul class="notifications-list" id="notifications-list">
+        <!-- Populated dynamically -->
+      </ul>
+    </section>
+  </main>
+
+  <script type="module" src="settings.js"></script>
+  <script type="module" src="../assets/js/ai-chat.js"></script>
+</body>
+</html>

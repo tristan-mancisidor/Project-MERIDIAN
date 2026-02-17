@@ -1,0 +1,247 @@
+/* ==========================================================================
+   Meridian Wealth Advisors - AI Chat Widget Styles
+   ========================================================================== */
+
+/* ---------- Floating Button ---------- */
+.ai-chat-btn {
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-gold);
+  color: var(--color-navy);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  z-index: var(--z-popover);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.ai-chat-btn:hover {
+  background-color: var(--color-gold-dark);
+  transform: scale(1.05);
+}
+
+/* ---------- Chat Window ---------- */
+.ai-chat-window {
+  display: none;
+  position: fixed;
+  bottom: calc(var(--space-8) + 70px);
+  right: var(--space-8);
+  width: 380px;
+  max-height: 520px;
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  z-index: var(--z-popover);
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-gray-200);
+}
+
+.ai-chat-window.open {
+  display: flex;
+}
+
+/* ---------- Chat Header ---------- */
+.ai-chat-header {
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--color-navy);
+  color: var(--color-white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-chat-title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.ai-chat-close {
+  background: none;
+  border: none;
+  color: var(--color-white);
+  font-size: var(--text-lg);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.ai-chat-close:hover {
+  opacity: 1;
+}
+
+/* ---------- Agent Selector ---------- */
+.ai-agent-selector {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-gray-200);
+  background-color: var(--color-gray-50);
+}
+
+.ai-agent-selector label {
+  font-size: var(--text-xs);
+  color: var(--color-slate);
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.ai-agent-selector select {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-gray-800);
+  background-color: var(--color-white);
+  outline: none;
+}
+
+.ai-agent-selector select:focus {
+  border-color: var(--color-gold);
+}
+
+/* ---------- Chat Messages ---------- */
+.ai-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 250px;
+}
+
+.ai-msg {
+  max-width: 85%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.ai-msg.user {
+  align-self: flex-end;
+  background-color: var(--color-navy);
+  color: var(--color-white);
+  border-bottom-right-radius: 4px;
+}
+
+.ai-msg.assistant {
+  align-self: flex-start;
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-800);
+  border-bottom-left-radius: 4px;
+}
+
+.ai-msg.disclaimer {
+  align-self: center;
+  background-color: rgba(212, 175, 55, 0.08);
+  color: var(--color-slate);
+  font-size: var(--text-xs);
+  max-width: 100%;
+  text-align: center;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Typing Indicator ---------- */
+.ai-typing {
+  display: none;
+  align-self: flex-start;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-gray-100);
+  border-radius: var(--radius-md);
+  border-bottom-left-radius: 4px;
+}
+
+.ai-typing.visible {
+  display: flex;
+}
+
+.ai-typing-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.ai-typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-slate);
+  animation: ai-bounce 1.4s infinite ease-in-out both;
+}
+
+.ai-typing-dot:nth-child(1) { animation-delay: 0s; }
+.ai-typing-dot:nth-child(2) { animation-delay: 0.16s; }
+.ai-typing-dot:nth-child(3) { animation-delay: 0.32s; }
+
+@keyframes ai-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ---------- Chat Input ---------- */
+.ai-chat-input {
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--color-gray-200);
+  display: flex;
+  gap: var(--space-2);
+}
+
+.ai-chat-input input {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  outline: none;
+}
+
+.ai-chat-input input:focus {
+  border-color: var(--color-gold);
+}
+
+.ai-chat-input button {
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-gold);
+  color: var(--color-navy);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+}
+
+.ai-chat-input button:hover {
+  background-color: var(--color-gold-dark);
+}
+
+.ai-chat-input button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+  .ai-chat-window {
+    right: var(--space-4);
+    left: var(--space-4);
+    width: auto;
+    bottom: calc(var(--space-4) + 70px);
+  }
+
+  .ai-chat-btn {
+    right: var(--space-4);
+    bottom: var(--space-4);
+  }
+}

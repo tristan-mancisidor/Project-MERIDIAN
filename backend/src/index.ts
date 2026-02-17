@@ -18,6 +18,7 @@ import messageRoutes from './routes/messages';
 import taskRoutes from './routes/tasks';
 import adminRoutes from './routes/admin';
 import aiAgentRoutes from './routes/ai-agent';
+import notificationRoutes from './routes/notifications';
 
 const app = express();
 
@@ -68,6 +69,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/ai', aiAgentRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // ============================================
 // HEALTH CHECK
@@ -98,6 +100,7 @@ app.get('/api', (_req, res) => {
       tasks: '/api/tasks',
       admin: '/api/admin',
       ai: '/api/ai',
+      notifications: '/api/notifications',
     },
   });
 });

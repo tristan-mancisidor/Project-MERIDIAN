@@ -1,0 +1,194 @@
+/* ==========================================================================
+   Meridian Wealth Advisors - Documents Page Styles
+   ========================================================================== */
+
+/* ---------- Filter Tabs ---------- */
+.filter-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-tab:hover {
+  border-color: var(--color-navy);
+  color: var(--color-navy);
+}
+
+.filter-tab.active {
+  background-color: var(--color-navy);
+  border-color: var(--color-navy);
+  color: var(--color-white);
+}
+
+/* ---------- Document List ---------- */
+.document-list {
+  list-style: none;
+}
+
+.document-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-gray-100);
+  transition: background-color var(--transition-fast);
+}
+
+.document-item:hover {
+  background-color: var(--color-gray-50);
+}
+
+.document-item:last-child {
+  border-bottom: none;
+}
+
+.document-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.document-name {
+  font-weight: var(--weight-medium);
+  color: var(--color-navy);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-1);
+}
+
+.document-meta {
+  display: flex;
+  gap: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-slate);
+}
+
+.document-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--space-4);
+  font-size: var(--text-lg);
+  color: var(--color-slate);
+  flex-shrink: 0;
+}
+
+.document-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.doc-btn {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.doc-btn:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+/* ---------- Upload Modal ---------- */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-modal);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  width: 100%;
+  max-width: 500px;
+  box-shadow: var(--shadow-xl);
+}
+
+.modal-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-navy);
+  margin-bottom: var(--space-6);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+/* ---------- Upload Area ---------- */
+.upload-area {
+  border: 2px dashed var(--color-gray-300);
+  border-radius: var(--radius-md);
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-slate);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+  margin-bottom: var(--space-4);
+}
+
+.upload-area:hover {
+  border-color: var(--color-gold);
+}
+
+.upload-area.dragover {
+  border-color: var(--color-gold);
+  background-color: rgba(212, 175, 55, 0.05);
+}
+
+.upload-file-name {
+  font-weight: var(--weight-medium);
+  color: var(--color-navy);
+  margin-top: var(--space-2);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .document-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .document-actions {
+    align-self: flex-end;
+  }
+}

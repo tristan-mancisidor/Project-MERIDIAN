@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Plan | Meridian Wealth Advisors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/portal.css">
+  <link rel="stylesheet" href="plan.css">
+</head>
+<body class="portal">
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo">Meridian<span class="gold">.</span></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="../dashboard/dashboard.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9632;</span> Dashboard
+      </a>
+      <a href="../portfolio/portfolio.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9650;</span> Portfolio
+      </a>
+      <a href="plan.html" class="sidebar-link active">
+        <span class="sidebar-icon">&#9679;</span> Financial Plan
+      </a>
+      <a href="../documents/documents.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9744;</span> Documents
+      </a>
+      <a href="../communication/messages.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9993;</span> Messages
+      </a>
+      <a href="../settings/settings.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9881;</span> Settings
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="#" class="sidebar-link">Log Out</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="portal-main" id="plan-content">
+    <header class="portal-header">
+      <div>
+        <h1 class="portal-greeting" id="plan-name">Financial Plan</h1>
+        <p class="portal-subtitle">
+          <span id="plan-status" class="rec-status"></span>
+          <span id="plan-review-date" style="margin-left:var(--space-3)"></span>
+        </p>
+      </div>
+    </header>
+
+    <!-- Plan Summary -->
+    <section class="panel" style="margin-bottom:var(--space-8)">
+      <h2 class="panel-title">Plan Overview</h2>
+      <p id="plan-summary-text" style="font-size:var(--text-sm);color:var(--color-gray-700);line-height:1.6"></p>
+    </section>
+
+    <!-- Score + Projections -->
+    <section class="plan-summary">
+      <!-- Retirement Score -->
+      <div class="panel score-card">
+        <h2 class="panel-title" style="text-align:center">Retirement Readiness</h2>
+        <div class="score-ring">
+          <svg viewBox="0 0 140 140">
+            <circle class="ring-bg" cx="70" cy="70" r="60"></circle>
+            <circle class="ring-fill" id="score-fill" cx="70" cy="70" r="60"></circle>
+          </svg>
+          <span class="score-number" id="score-number">--</span>
+        </div>
+        <div class="score-label" id="score-label">Loading...</div>
+      </div>
+
+      <!-- Projections -->
+      <div class="panel" style="grid-column: span 2">
+        <h2 class="panel-title">Retirement Projections</h2>
+        <div class="projection-grid" id="projections">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Assumptions -->
+    <section class="panel">
+      <h2 class="panel-title">Plan Assumptions</h2>
+      <div class="assumptions-grid" id="assumptions">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="panel">
+      <h2 class="panel-title">Recommendations</h2>
+      <ul class="recommendation-list" id="recommendations">
+        <!-- Populated dynamically -->
+      </ul>
+    </section>
+
+    <!-- Goals -->
+    <section>
+      <h2 class="panel-title" style="margin-bottom:var(--space-6)">Your Financial Goals</h2>
+      <div class="goals-grid" id="goals-grid">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="plan.js"></script>
+  <script type="module" src="../assets/js/ai-chat.js"></script>
+</body>
+</html>

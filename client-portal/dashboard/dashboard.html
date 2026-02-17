@@ -83,56 +83,14 @@
       <div class="panel">
         <h2 class="panel-title">Goal Progress</h2>
         <div id="goals-container">
-          <!-- Goals populated dynamically -->
-          <div class="goal-item">
-            <div class="goal-header">
-              <span class="goal-name">Retirement at 65</span>
-              <span class="goal-percent">72%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 72%"></div>
-            </div>
-          </div>
-          <div class="goal-item">
-            <div class="goal-header">
-              <span class="goal-name">College Fund - Child 1</span>
-              <span class="goal-percent">45%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 45%"></div>
-            </div>
-          </div>
-          <div class="goal-item">
-            <div class="goal-header">
-              <span class="goal-name">Emergency Fund</span>
-              <span class="goal-percent">100%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill complete" style="width: 100%"></div>
-            </div>
-          </div>
+          <!-- Populated dynamically from API -->
         </div>
       </div>
 
       <div class="panel">
         <h2 class="panel-title">Recent Activity</h2>
         <ul class="activity-feed" id="activity-feed">
-          <li class="activity-item">
-            <span class="activity-date">Feb 7</span>
-            <span class="activity-text">Portfolio rebalanced - 3 trades executed</span>
-          </li>
-          <li class="activity-item">
-            <span class="activity-date">Feb 3</span>
-            <span class="activity-text">Tax-loss harvesting opportunity captured: $1,240</span>
-          </li>
-          <li class="activity-item">
-            <span class="activity-date">Jan 28</span>
-            <span class="activity-text">Monthly performance report available</span>
-          </li>
-          <li class="activity-item">
-            <span class="activity-date">Jan 15</span>
-            <span class="activity-text">Financial plan updated - Roth conversion analysis added</span>
-          </li>
+          <!-- Populated dynamically from API -->
         </ul>
       </div>
     </section>
@@ -141,25 +99,12 @@
     <section class="panel">
       <h2 class="panel-title">Action Items</h2>
       <div class="action-items" id="action-items">
-        <div class="action-item">
-          <input type="checkbox" id="action-1">
-          <label for="action-1">Review and sign updated investment policy statement</label>
-          <span class="action-due">Due: Feb 15</span>
-        </div>
-        <div class="action-item">
-          <input type="checkbox" id="action-2">
-          <label for="action-2">Upload 2025 tax return for tax planning review</label>
-          <span class="action-due">Due: Mar 1</span>
-        </div>
-        <div class="action-item">
-          <input type="checkbox" id="action-3">
-          <label for="action-3">Schedule Q1 portfolio review meeting</label>
-          <span class="action-due">Due: Mar 15</span>
-        </div>
+        <!-- Populated dynamically from API -->
       </div>
     </section>
   </main>
 
-  <script src="../assets/js/portal.js"></script>
+  <script type="module" src="dashboard-app.js"></script>
+  <script type="module" src="../assets/js/ai-chat.js"></script>
 </body>
 </html>

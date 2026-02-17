@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages | Meridian Wealth Advisors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/portal.css">
+  <link rel="stylesheet" href="messages.css">
+</head>
+<body class="portal">
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo">Meridian<span class="gold">.</span></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="../dashboard/dashboard.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9632;</span> Dashboard
+      </a>
+      <a href="../portfolio/portfolio.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9650;</span> Portfolio
+      </a>
+      <a href="../financial-plan/plan.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9679;</span> Financial Plan
+      </a>
+      <a href="../documents/documents.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9744;</span> Documents
+      </a>
+      <a href="messages.html" class="sidebar-link active">
+        <span class="sidebar-icon">&#9993;</span> Messages
+      </a>
+      <a href="../settings/settings.html" class="sidebar-link">
+        <span class="sidebar-icon">&#9881;</span> Settings
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="#" class="sidebar-link">Log Out</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="portal-main">
+    <header class="portal-header">
+      <div>
+        <h1 class="portal-greeting">Messages</h1>
+        <p class="portal-subtitle">Communicate with your advisory team</p>
+      </div>
+    </header>
+
+    <!-- Messages Layout -->
+    <div class="messages-layout">
+      <!-- Conversation List -->
+      <div class="conversation-list-panel">
+        <div class="conversation-list-header">
+          <h3>Conversations</h3>
+          <button class="new-conv-btn" id="new-conv-btn">+ New</button>
+        </div>
+        <ul class="conversation-list" id="conversation-list">
+          <!-- Populated dynamically -->
+        </ul>
+      </div>
+
+      <!-- Chat Panel -->
+      <div class="chat-panel">
+        <div id="chat-header" class="chat-header">
+          <div class="chat-subject">Select a conversation</div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-empty">Select a conversation to view messages</div>
+        </div>
+        <form class="chat-compose" id="chat-compose" style="display:none">
+          <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off">
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- New Conversation Modal -->
+  <div class="modal-overlay" id="new-conv-modal">
+    <div class="modal">
+      <h2 class="modal-title">New Conversation</h2>
+      <form id="new-conv-form">
+        <div class="form-group">
+          <label class="form-label" for="new-conv-subject">Subject</label>
+          <input class="form-input" type="text" id="new-conv-subject" placeholder="e.g. Question about my portfolio" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-conv-message">Message (optional)</label>
+          <input class="form-input" type="text" id="new-conv-message" placeholder="Type your first message...">
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn--outline btn--sm" type="button" id="cancel-new-conv">Cancel</button>
+          <button class="btn btn--primary btn--sm" type="submit">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="messages.js"></script>
+  <script type="module" src="../assets/js/ai-chat.js"></script>
+</body>
+</html>
