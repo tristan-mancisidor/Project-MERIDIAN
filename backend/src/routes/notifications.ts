@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import { authenticate } from '../middleware/auth';
-import { AuthenticatedRequest } from '../types';
+import { AuthenticatedRequest, qs } from '../types';
 import { prisma } from '../config/database';
 import { paginationSchema } from '../middleware/validation';
 import { asyncHandler, NotFoundError } from '../middleware/errorHandler';
@@ -42,7 +42,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const notification = await prisma.notification.findUnique({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
     });
     if (!notification) throw new NotFoundError('Notification');
     if (req.user!.type === 'client' && notification.clientId !== req.user!.id) {
@@ -58,7 +58,7 @@ router.put(
   authenticate,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const notification = await prisma.notification.update({
-      where: { id: req.params.id },
+      where: { id: qs(req.params.id) },
       data: { isRead: true },
     });
     res.json(notification);
