@@ -49,9 +49,9 @@ async function loadPortfolio() {
     renderAllocation(summary.assetAllocation);
     renderAccountCards(summary.accounts);
 
-    // Auto-select first account
-    if (accounts.length > 0) {
-      renderAccountDetail(accounts[0]);
+    // Auto-select first account — use summary.accounts[0] so the active card matches the detail shown
+    if (summary.accounts.length > 0) {
+      await fetchAndRenderAccount(summary.accounts[0].id);
     }
   } catch (err) {
     console.error('Failed to load portfolio:', err);
@@ -101,6 +101,17 @@ function renderAllocation(allocation) {
   });
 }
 
+// Fetch full account detail (holdings + transactions) then render
+async function fetchAndRenderAccount(accountId) {
+  try {
+    const account = await apiGet(`/investments/accounts/${accountId}`);
+    renderAccountDetail(account);
+  } catch (err) {
+    console.error('Failed to load account detail:', err);
+    showError('holdings-body', 'Failed to load account details.');
+  }
+}
+
 function renderAccountCards(accounts) {
   const container = document.getElementById('account-cards');
   if (!container) return;
@@ -118,14 +129,12 @@ function renderAccountCards(accounts) {
     </div>
   `).join('');
 
-  // Click handlers
+  // Click handlers — fetch full account detail to get transactions
   container.querySelectorAll('.account-card').forEach((card) => {
     card.addEventListener('click', async () => {
       container.querySelectorAll('.account-card').forEach((c) => c.classList.remove('active'));
       card.classList.add('active');
-      const id = card.dataset.accountId;
-      const fullAccount = accountsData.find((a) => a.id === id);
-      if (fullAccount) renderAccountDetail(fullAccount);
+      await fetchAndRenderAccount(card.dataset.accountId);
     });
   });
 }

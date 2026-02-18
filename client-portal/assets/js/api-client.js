@@ -3,7 +3,7 @@
    Fetch wrapper with Bearer token, 401 interceptor, auto-refresh
    ========================================================================== */
 
-const API_BASE = 'http://localhost:3000/api';
+const API_BASE = 'http://localhost:3001/api';
 
 function getAccessToken() {
   return localStorage.getItem('accessToken');
