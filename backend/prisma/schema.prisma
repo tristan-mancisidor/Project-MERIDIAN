@@ -73,6 +73,7 @@ model Client {
   feeSchedule      FeeSchedule?
   complianceChecks ComplianceCheck[]
   aiInteractions   AIInteraction[]
+  agentMemories    AgentMemory[]
 
   @@map("clients")
 }
@@ -491,19 +492,22 @@ enum ComplianceStatus {
 // 15. AI INTERACTION
 // ============================================
 model AIInteraction {
-  id            String   @id @default(uuid())
-  userId        String?  @map("user_id")
-  clientId      String?  @map("client_id")
-  agentType     String   @map("agent_type") // financial_planning, investment, compliance, client_support, marketing
-  prompt        String   @db.Text
-  response      String   @db.Text
-  model         String   // claude-sonnet-4-5-20250929, etc.
-  tokensUsed    Int?     @map("tokens_used")
-  latencyMs     Int?     @map("latency_ms")
-  wasApproved   Boolean? @map("was_approved")
-  complianceFlag Boolean @default(false) @map("compliance_flag")
-  metadata      Json?    // extra context
-  createdAt     DateTime @default(now()) @map("created_at")
+  id              String            @id @default(uuid())
+  userId          String?           @map("user_id")
+  clientId        String?           @map("client_id")
+  agentType       String            @map("agent_type") // financial_planning, investment, compliance, client_support, marketing
+  prompt          String            @db.Text
+  response        String            @db.Text
+  model           String            // claude-sonnet-4-5-20250929, etc.
+  tokensUsed      Int?              @map("tokens_used")
+  latencyMs       Int?              @map("latency_ms")
+  wasApproved     Boolean?          @map("was_approved")
+  complianceFlag  Boolean           @default(false) @map("compliance_flag")
+  triggerType     InteractionTrigger @default(USER_CHAT) @map("trigger_type")
+  agentTaskId     String?           @map("agent_task_id")
+  memoryExtracted Boolean           @default(false) @map("memory_extracted")
+  metadata        Json?             // extra context
+  createdAt       DateTime          @default(now()) @map("created_at")
 
   user   User?   @relation(fields: [userId], references: [id])
   client Client? @relation(fields: [clientId], references: [id])
@@ -511,6 +515,13 @@ model AIInteraction {
   @@index([agentType])
   @@index([clientId])
   @@map("ai_interactions")
+}
+
+enum InteractionTrigger {
+  USER_CHAT
+  SCHEDULED
+  EVENT
+  AGENT_CHAIN
 }
 
 // ============================================
@@ -601,4 +612,44 @@ model FeeSchedule {
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@map("fee_schedules")
+}
+
+// ============================================
+// 19. AGENT MEMORY (Persistent agent context)
+// ============================================
+model AgentMemory {
+  id                  String             @id @default(uuid())
+  clientId            String             @map("client_id")
+  agentType           String             @map("agent_type")
+  memoryType          MemoryType         @map("memory_type")
+  content             String             @db.Text
+  structuredData      Json?              @map("structured_data") // {key, value, confidence}
+  importance          MemoryImportance   @default(MEDIUM)
+  expiresAt           DateTime?          @map("expires_at")
+  sourceInteractionId String?            @map("source_interaction_id")
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime           @updatedAt @map("updated_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId, agentType])
+  @@index([clientId, memoryType])
+  @@index([importance])
+  @@map("agent_memories")
+}
+
+enum MemoryType {
+  CONVERSATION_SUMMARY
+  PREFERENCE
+  LIFE_EVENT
+  RECOMMENDATION
+  DECISION
+  RELATIONSHIP_NOTE
+}
+
+enum MemoryImportance {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
 }

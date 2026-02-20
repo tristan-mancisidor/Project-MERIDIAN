@@ -3,6 +3,7 @@ import { env } from '../config/environment';
 import { prisma } from '../config/database';
 import { logger } from '../middleware/logger';
 import { runComplianceGate, addComplianceDisclaimer } from './compliance';
+import { extractMemories, buildEnrichedContext } from './agent-memory';
 import { AIAgentRequest, AIAgentResponse, AgentType } from '../types';
 
 const anthropic = env.anthropic.apiKey
@@ -118,10 +119,10 @@ export async function invokeAgent(request: AIAgentRequest, userId?: string): Pro
     };
   }
 
-  // Build context from client data if available
+  // Build enriched context from client data + agent memories
   let clientContext = '';
   if (request.clientId) {
-    clientContext = await buildClientContext(request.clientId);
+    clientContext = await buildEnrichedContext(request.clientId, request.agentType);
   }
 
   const systemPrompt = AGENT_SYSTEM_PROMPTS[request.agentType];
@@ -135,7 +136,14 @@ export async function invokeAgent(request: AIAgentRequest, userId?: string): Pro
     const simulated = getSimulatedResponse(request.agentType, request.prompt);
     const latencyMs = Date.now() - startTime;
 
-    await logInteraction(request, simulated, MODEL, 0, latencyMs, false, userId);
+    const interactionId = await logInteraction(request, simulated, MODEL, 0, latencyMs, false, userId);
+
+    // Fire-and-forget memory extraction — do not await
+    if (interactionId && request.clientId) {
+      extractMemories(interactionId).catch((err) =>
+        logger.error('[MEMORY] Background extraction failed:', { error: err.message })
+      );
+    }
 
     return {
       response: addComplianceDisclaimer(simulated, request.agentType),
@@ -176,7 +184,7 @@ export async function invokeAgent(request: AIAgentRequest, userId?: string): Pro
       ? addComplianceDisclaimer(responseText, request.agentType)
       : `[Response held for compliance review]\n\nThe AI-generated response has been flagged for compliance review before delivery. A compliance officer will review and approve or revise the content.`;
 
-    await logInteraction(
+    const interactionId = await logInteraction(
       request,
       finalResponse,
       MODEL,
@@ -185,6 +193,13 @@ export async function invokeAgent(request: AIAgentRequest, userId?: string): Pro
       !responseCompliance.passed,
       userId
     );
+
+    // Fire-and-forget memory extraction — do not await
+    if (interactionId && request.clientId) {
+      extractMemories(interactionId).catch((err) =>
+        logger.error('[MEMORY] Background extraction failed:', { error: err.message })
+      );
+    }
 
     return {
       response: finalResponse,
@@ -209,49 +224,6 @@ export async function invokeAgent(request: AIAgentRequest, userId?: string): Pro
   }
 }
 
-async function buildClientContext(clientId: string): Promise<string> {
-  try {
-    const [client, profile, accounts, goals, activePlan] = await Promise.all([
-      prisma.client.findUnique({
-        where: { id: clientId },
-        select: { firstName: true, lastName: true, serviceTier: true, custodian: true },
-      }),
-      prisma.clientProfile.findUnique({ where: { clientId } }),
-      prisma.account.findMany({
-        where: { clientId, isActive: true },
-        include: { holdings: { take: 10, orderBy: { weight: 'desc' } } },
-      }),
-      prisma.goal.findMany({ where: { clientId } }),
-      prisma.financialPlan.findFirst({
-        where: { clientId, status: { in: ['ACTIVE', 'APPROVED'] } },
-        orderBy: { updatedAt: 'desc' },
-      }),
-    ]);
-
-    if (!client) return '';
-
-    const totalPortfolio = accounts.reduce((sum, a) => sum + Number(a.currentValue), 0);
-
-    const context = [
-      `Client: ${client.firstName} ${client.lastName}`,
-      `Service Tier: ${client.serviceTier}`,
-      `Custodian: ${client.custodian}`,
-      profile ? `Risk Tolerance: ${profile.riskTolerance}` : '',
-      profile?.annualIncome ? `Annual Income: $${Number(profile.annualIncome).toLocaleString()}` : '',
-      profile?.netWorth ? `Net Worth: $${Number(profile.netWorth).toLocaleString()}` : '',
-      `Total Portfolio Value: $${totalPortfolio.toLocaleString()}`,
-      `Accounts: ${accounts.map((a) => `${a.accountName} (${a.accountType}): $${Number(a.currentValue).toLocaleString()}`).join('; ')}`,
-      goals.length > 0 ? `Goals: ${goals.map((g) => `${g.name} - ${Number(g.progress)}% complete`).join('; ')}` : '',
-      activePlan ? `Active Plan: ${activePlan.name} (Retirement Score: ${activePlan.retirementScore || 'N/A'})` : '',
-    ].filter(Boolean);
-
-    return context.join('\n');
-  } catch (error) {
-    logger.error('Error building client context:', error);
-    return '';
-  }
-}
-
 async function logInteraction(
   request: AIAgentRequest,
   response: string,
@@ -259,10 +231,11 @@ async function logInteraction(
   tokensUsed: number,
   latencyMs: number,
   complianceFlag: boolean,
-  userId?: string
-): Promise<void> {
+  userId?: string,
+  triggerType: 'USER_CHAT' | 'SCHEDULED' | 'EVENT' | 'AGENT_CHAIN' = 'USER_CHAT'
+): Promise<string | null> {
   try {
-    await prisma.aIInteraction.create({
+    const interaction = await prisma.aIInteraction.create({
       data: {
         userId,
         clientId: request.clientId,
@@ -273,11 +246,14 @@ async function logInteraction(
         tokensUsed,
         latencyMs,
         complianceFlag,
+        triggerType,
         metadata: request.context,
       },
     });
+    return interaction.id;
   } catch (error) {
     logger.error('Error logging AI interaction:', error);
+    return null;
   }
 }
 

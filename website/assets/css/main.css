@@ -149,6 +149,18 @@ p {
   border-bottom-color: var(--color-gold);
 }
 
+.nav-login {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-navy) !important;
+  padding: var(--space-3) var(--space-4);
+  transition: color var(--transition-fast);
+}
+
+.nav-login:hover {
+  color: var(--color-gold) !important;
+}
+
 .nav-cta {
   display: inline-flex;
   align-items: center;
