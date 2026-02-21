@@ -30,11 +30,11 @@ meridian-wealth-advisors/
 │   └── assets/           # Shared modules (API client, auth, components)
 ├── backend/              # Express/TypeScript API server
 │   ├── src/
-│   │   ├── routes/       # Auth, Clients, Investments, Documents, Messages, Tasks, Admin, AI
-│   │   ├── services/     # AI agent orchestration, compliance checking
+│   │   ├── routes/       # Auth, Clients, Investments, Documents, Messages, Tasks, Admin, AI, Outreach
+│   │   ├── services/     # AI agents, compliance, agent memory, outreach triggers/messages, scheduler
 │   │   ├── middleware/    # JWT auth, rate limiting, validation, error handling
 │   │   └── config/       # Environment, database connection
-│   └── prisma/           # Schema (18 models), migrations, seed data
+│   └── prisma/           # Schema (22 models), migrations, seed data
 ├── agent-prompts/        # AI agent system prompts and personas
 ├── compliance-docs/      # Regulatory templates (Form ADV, Form CRS, Privacy Policy)
 ├── integrations/         # Custodian integrations (Schwab, Fidelity, Orion)
@@ -122,6 +122,7 @@ meridian-wealth-advisors/
 | Tasks | `/api/tasks` | Action items, meetings, notifications |
 | Admin | `/api/admin` | Dashboard, user management, audit logs, compliance |
 | AI | `/api/ai` | AI agent invocation, agent listing |
+| Outreach | `/api/outreach` | Proactive outreach messages, triggers, rules, scheduler |
 | Health | `/api/health` | Server health check |
 
 ## AI Agents
@@ -138,7 +139,7 @@ All AI responses pass through pre- and post-response compliance checks that scan
 
 ## Database Schema
 
-18 Prisma models covering the full RIA domain:
+22 Prisma models covering the full RIA domain:
 
 **Core:** User, Client, ClientProfile
 **Investments:** Account, Holding, Transaction, FeeSchedule
@@ -146,6 +147,8 @@ All AI responses pass through pre- and post-response compliance checks that scan
 **Communication:** Conversation, Message, Notification
 **Operations:** Task, Meeting, Document
 **Compliance:** AuditLog, ComplianceCheck, AIInteraction
+**AI Memory:** AgentMemory
+**Outreach:** OutreachRule, OutreachTrigger, OutreachMessage
 
 ## Service Tiers
 
@@ -160,7 +163,9 @@ All AI responses pass through pre- and post-response compliance checks that scan
 
 - **Phase 1** (Complete) — Marketing website with 8 pages, design system, responsive layout
 - **Phase 2** (Complete) — Backend API, database schema, authentication, AI agents, Docker infrastructure
-- **Phase 3** (In Progress) — Client portal integration, live dashboard, AI chat widget, document vault, messaging
+- **Phase 3** (Complete) — Client portal integration, live dashboard, AI chat widget, document vault, messaging
+- **Phase 4.1** (Complete) — Agent Memory Layer: persistent AI context across interactions, memory extraction via Claude Haiku, enriched context building with token budgets
+- **Phase 4.2** (Complete) — Proactive Client Outreach System: scheduled trigger detection (portfolio drift, goal off-track, account milestones, review due, life events, market events), AI-drafted personalized messages, advisor review/approve workflow, full SEC audit trail
 
 ## License
 

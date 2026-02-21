@@ -29,6 +29,7 @@ model User {
   auditLogs        AuditLog[]
   aiInteractions   AIInteraction[]
   meetings         Meeting[]        @relation("MeetingAdvisor")
+  reviewedOutreach OutreachMessage[] @relation("OutreachReviewer")
 
   @@map("users")
 }
@@ -74,6 +75,8 @@ model Client {
   complianceChecks ComplianceCheck[]
   aiInteractions   AIInteraction[]
   agentMemories    AgentMemory[]
+  outreachTriggers OutreachTrigger[]
+  outreachMessages OutreachMessage[]
 
   @@map("clients")
 }
@@ -652,4 +655,122 @@ enum MemoryImportance {
   MEDIUM
   HIGH
   CRITICAL
+}
+
+// ============================================
+// 20. OUTREACH RULE (Configurable trigger thresholds)
+// ============================================
+model OutreachRule {
+  id              String        @id @default(uuid())
+  name            String        @unique
+  triggerType     TriggerType   @map("trigger_type")
+  isActive        Boolean       @default(true) @map("is_active")
+  config          Json          // Threshold values, conditions, parameters
+  agentType       String        @map("agent_type") // Which AI agent drafts the outreach
+  priority        OutreachPriority @default(MEDIUM)
+  cooldownDays    Int           @default(30) @map("cooldown_days") // Min days between same trigger per client
+  description     String?       @db.Text
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  triggers OutreachTrigger[]
+
+  @@index([triggerType])
+  @@map("outreach_rules")
+}
+
+// ============================================
+// 21. OUTREACH TRIGGER (Detected trigger events)
+// ============================================
+model OutreachTrigger {
+  id              String          @id @default(uuid())
+  clientId        String          @map("client_id")
+  ruleId          String          @map("rule_id")
+  triggerType     TriggerType     @map("trigger_type")
+  status          TriggerStatus   @default(DETECTED)
+  triggerData     Json            @map("trigger_data") // What was detected (drift %, event details, etc.)
+  detectedAt      DateTime        @default(now()) @map("detected_at")
+  processedAt     DateTime?       @map("processed_at")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  client   Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  rule     OutreachRule   @relation(fields: [ruleId], references: [id])
+  messages OutreachMessage[]
+
+  @@index([clientId])
+  @@index([triggerType, status])
+  @@index([detectedAt])
+  @@map("outreach_triggers")
+}
+
+// ============================================
+// 22. OUTREACH MESSAGE (Draft messages for advisor review)
+// ============================================
+model OutreachMessage {
+  id              String            @id @default(uuid())
+  triggerId       String            @map("trigger_id")
+  clientId        String            @map("client_id")
+  channel         OutreachChannel   @default(EMAIL)
+  subject         String
+  body            String            @db.Text
+  status          OutreachStatus    @default(DRAFT)
+  priority        OutreachPriority  @default(MEDIUM)
+  reviewedBy      String?           @map("reviewed_by")
+  reviewedAt      DateTime?         @map("reviewed_at")
+  reviewNotes     String?           @map("review_notes") @db.Text
+  sentAt          DateTime?         @map("sent_at")
+  aiInteractionId String?           @map("ai_interaction_id") // Links to the AI call that drafted this
+  metadata        Json?             // Additional context for audit trail
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  trigger  OutreachTrigger @relation(fields: [triggerId], references: [id], onDelete: Cascade)
+  client   Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  reviewer User?           @relation("OutreachReviewer", fields: [reviewedBy], references: [id])
+
+  @@index([status])
+  @@index([clientId])
+  @@index([createdAt])
+  @@map("outreach_messages")
+}
+
+enum TriggerType {
+  PORTFOLIO_DRIFT
+  MARKET_EVENT
+  LIFE_EVENT
+  ACCOUNT_MILESTONE
+  REVIEW_DUE
+  GOAL_OFF_TRACK
+}
+
+enum TriggerStatus {
+  DETECTED
+  PROCESSING
+  MESSAGE_DRAFTED
+  COMPLETED
+  SKIPPED   // Cooldown or suppressed
+  ERROR
+}
+
+enum OutreachChannel {
+  EMAIL
+  PORTAL
+  SMS
+}
+
+enum OutreachStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  SENT
+  FAILED
+}
+
+enum OutreachPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
