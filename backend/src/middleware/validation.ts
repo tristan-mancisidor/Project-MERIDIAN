@@ -197,6 +197,37 @@ export const createMeetingSchema = z.object({
 });
 
 // ============================================
+// OUTREACH SCHEMAS
+// ============================================
+export const outreachReviewSchema = z.object({
+  action: z.enum(['approve', 'reject']),
+  notes: z.string().max(2000).optional(),
+  editedSubject: z.string().min(1).max(500).optional(),
+  editedBody: z.string().min(1).max(10000).optional(),
+});
+
+export const outreachRuleCreateSchema = z.object({
+  name: z.string().min(1).max(200),
+  triggerType: z.enum(['PORTFOLIO_DRIFT', 'MARKET_EVENT', 'LIFE_EVENT', 'ACCOUNT_MILESTONE', 'REVIEW_DUE', 'GOAL_OFF_TRACK']),
+  agentType: z.string().min(1),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
+  cooldownDays: z.number().int().min(1).max(365).optional(),
+  description: z.string().max(2000).optional(),
+  config: z.record(z.any()).default({}),
+  isActive: z.boolean().optional(),
+});
+
+export const outreachRuleUpdateSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  isActive: z.boolean().optional(),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
+  cooldownDays: z.number().int().min(1).max(365).optional(),
+  description: z.string().max(2000).optional(),
+  config: z.record(z.any()).optional(),
+  agentType: z.string().min(1).optional(),
+});
+
+// ============================================
 // PAGINATION
 // ============================================
 export const paginationSchema = z.object({

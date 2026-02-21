@@ -7,6 +7,7 @@ import { env } from './config/environment';
 import { connectDatabase, disconnectDatabase } from './config/database';
 import { httpLogger, logger } from './middleware/logger';
 import { errorHandler } from './middleware/errorHandler';
+import { startScheduler, stopScheduler } from './services/scheduler';
 
 // Route imports
 import authRoutes from './routes/auth';
@@ -19,6 +20,7 @@ import taskRoutes from './routes/tasks';
 import adminRoutes from './routes/admin';
 import aiAgentRoutes from './routes/ai-agent';
 import notificationRoutes from './routes/notifications';
+import outreachRoutes from './routes/outreach';
 
 const app = express();
 
@@ -70,6 +72,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/ai', aiAgentRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/outreach', outreachRoutes);
 
 // ============================================
 // HEALTH CHECK
@@ -101,6 +104,7 @@ app.get('/api', (_req, res) => {
       admin: '/api/admin',
       ai: '/api/ai',
       notifications: '/api/notifications',
+      outreach: '/api/outreach',
     },
   });
 });
@@ -127,6 +131,9 @@ async function startServer() {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
+    // Start the outreach scheduler
+    startScheduler();
+
     app.listen(env.port, () => {
       logger.info(`
 ╔══════════════════════════════════════════════════╗
@@ -134,6 +141,7 @@ async function startServer() {
 ║   Running on: http://localhost:${env.port}              ║
 ║   Environment: ${env.nodeEnv.padEnd(33)}║
 ║   Database: Connected                            ║
+║   Scheduler: Active                              ║
 ╚══════════════════════════════════════════════════╝
       `);
     });
@@ -146,12 +154,14 @@ async function startServer() {
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   logger.info('SIGTERM received. Shutting down gracefully...');
+  stopScheduler();
   await disconnectDatabase();
   process.exit(0);
 });
 
 process.on('SIGINT', async () => {
   logger.info('SIGINT received. Shutting down...');
+  stopScheduler();
   await disconnectDatabase();
   process.exit(0);
 });
