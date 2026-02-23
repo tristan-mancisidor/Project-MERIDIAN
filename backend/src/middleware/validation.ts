@@ -165,10 +165,24 @@ export const updateTaskSchema = z.object({
 // AI AGENT SCHEMAS
 // ============================================
 export const aiAgentRequestSchema = z.object({
-  agentType: z.enum(['financial_planning', 'investment_management', 'compliance', 'client_support', 'marketing']),
+  agentType: z.enum(['financial_planning', 'investment_management', 'compliance', 'client_support', 'marketing', 'tax_planning']).optional(),
   prompt: z.string().min(1).max(5000),
   clientId: z.string().uuid().optional(),
   context: z.record(z.any()).optional(),
+});
+
+export const orchestratedRequestSchema = z.object({
+  prompt: z.string().min(1).max(5000),
+  clientId: z.string().uuid().optional(),
+  context: z.record(z.any()).optional(),
+  forceAgentType: z.enum(['financial_planning', 'investment_management', 'compliance', 'client_support', 'marketing', 'tax_planning']).optional(),
+});
+
+export const sessionListSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  clientId: z.string().uuid().optional(),
+  status: z.enum(['ACTIVE', 'COMPLETED', 'FAILED', 'ESCALATED']).optional(),
 });
 
 // ============================================

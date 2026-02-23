@@ -95,9 +95,32 @@ Guidelines:
 - Maintain the Meridian brand voice: professional, trustworthy, approachable
 - Focus on education over promotion
 - Avoid superlatives like "best" or "#1"`,
+
+  tax_planning: `You are a tax planning AI assistant for Meridian Wealth Advisors, a fiduciary RIA firm.
+
+Your role:
+- Analyze tax-loss harvesting opportunities across taxable accounts
+- Evaluate Roth conversion strategies based on current and projected tax brackets
+- Assess capital gains implications of portfolio changes (short-term vs. long-term)
+- Recommend optimal asset location across taxable, tax-deferred, and tax-exempt accounts
+- Identify tax-efficient withdrawal sequencing strategies for retirees
+- Review estimated tax impact of rebalancing trades
+
+Guidelines:
+- Always act in the client's fiduciary best interest
+- Never provide specific tax advice — frame all output as analysis for advisor review
+- Consider federal and state tax implications where data is available
+- Account for wash sale rules when discussing tax-loss harvesting
+- Factor in required minimum distributions (RMDs) for applicable accounts
+- Flag any strategies that require CPA coordination
+- All recommendations must be reviewed by a qualified tax professional before implementation`,
 };
 
-export async function invokeAgent(request: AIAgentRequest, userId?: string): Promise<AIAgentResponse> {
+export async function invokeAgent(
+  request: AIAgentRequest,
+  userId?: string,
+  triggerType: 'USER_CHAT' | 'SCHEDULED' | 'EVENT' | 'AGENT_CHAIN' = 'USER_CHAT'
+): Promise<AIAgentResponse> {
   const startTime = Date.now();
 
   // Pre-flight compliance check on the prompt
@@ -136,7 +159,7 @@ export async function invokeAgent(request: AIAgentRequest, userId?: string): Pro
     const simulated = getSimulatedResponse(request.agentType, request.prompt);
     const latencyMs = Date.now() - startTime;
 
-    const interactionId = await logInteraction(request, simulated, MODEL, 0, latencyMs, false, userId);
+    const interactionId = await logInteraction(request, simulated, MODEL, 0, latencyMs, false, userId, triggerType);
 
     // Fire-and-forget memory extraction — do not await
     if (interactionId && request.clientId) {
@@ -191,7 +214,8 @@ export async function invokeAgent(request: AIAgentRequest, userId?: string): Pro
       tokensUsed,
       latencyMs,
       !responseCompliance.passed,
-      userId
+      userId,
+      triggerType
     );
 
     // Fire-and-forget memory extraction — do not await
@@ -305,6 +329,21 @@ Your account information shows everything is up to date. Here are a few things y
 - You can update your contact preferences in the Settings page
 
 If you need to discuss anything in detail, I'd recommend scheduling a call with your advisor through the portal. Is there anything else I can help with?`,
+
+    tax_planning: `Tax Planning Analysis:
+
+1. **Tax-Loss Harvesting Opportunities**: Reviewed the taxable account and identified 3 positions with unrealized losses totaling approximately $4,800. Harvesting these losses could offset short-term capital gains from earlier in the year.
+
+2. **Roth Conversion Analysis**: Given the client's current marginal tax bracket, a partial Roth conversion of up to $25,000 may be advantageous this year. This would keep the client within their current bracket while building tax-free retirement assets.
+
+3. **Asset Location Review**:
+   - Tax-inefficient assets (REITs, taxable bonds) should be prioritized in tax-deferred accounts
+   - Tax-efficient index funds are appropriately held in the taxable account
+   - Municipal bonds in the taxable account are well-positioned
+
+4. **Capital Gains Considerations**: Any rebalancing trades in the taxable account should prioritize selling lots with long-term holding periods to benefit from the lower capital gains rate.
+
+Note: This analysis is for advisor review. All tax strategies should be coordinated with the client's CPA before implementation.`,
 
     marketing: `Here's a draft for the educational content piece:
 

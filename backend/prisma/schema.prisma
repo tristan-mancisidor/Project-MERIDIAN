@@ -30,6 +30,7 @@ model User {
   aiInteractions   AIInteraction[]
   meetings         Meeting[]        @relation("MeetingAdvisor")
   reviewedOutreach OutreachMessage[] @relation("OutreachReviewer")
+  agentSessions    AgentSession[]
 
   @@map("users")
 }
@@ -77,6 +78,7 @@ model Client {
   agentMemories    AgentMemory[]
   outreachTriggers OutreachTrigger[]
   outreachMessages OutreachMessage[]
+  agentSessions    AgentSession[]
 
   @@map("clients")
 }
@@ -773,4 +775,80 @@ enum OutreachPriority {
   MEDIUM
   HIGH
   URGENT
+}
+
+// ============================================
+// 23. AGENT SESSION (Multi-agent orchestration)
+// ============================================
+model AgentSession {
+  id                  String            @id @default(uuid())
+  clientId            String?           @map("client_id")
+  userId              String?           @map("user_id")
+  originalQuery       String            @map("original_query") @db.Text
+  classifiedIntents   Json              @map("classified_intents")
+  status              SessionStatus     @default(ACTIVE)
+  participatingAgents String[]          @map("participating_agents")
+  totalTokens         Int               @default(0) @map("total_tokens")
+  confidenceScore     Decimal?          @map("confidence_score") @db.Decimal(3, 2) // 0.00–1.00
+  escalationLevel     EscalationLevel   @default(NONE) @map("escalation_level")
+  finalResponse       String?           @map("final_response") @db.Text
+  errorMessage        String?           @map("error_message") @db.Text
+  latencyMs           Int?              @map("latency_ms")
+  createdAt           DateTime          @default(now()) @map("created_at")
+  updatedAt           DateTime          @updatedAt @map("updated_at")
+
+  client   Client?        @relation(fields: [clientId], references: [id])
+  user     User?          @relation(fields: [userId], references: [id])
+  handoffs AgentHandoff[]
+
+  @@index([clientId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("agent_sessions")
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  FAILED
+  ESCALATED
+}
+
+// ============================================
+// 24. AGENT HANDOFF (Individual agent calls within a session)
+// ============================================
+model AgentHandoff {
+  id              String        @id @default(uuid())
+  sessionId       String        @map("session_id")
+  fromAgent       String?       @map("from_agent")
+  toAgent         String        @map("to_agent")
+  handoffDepth    Int           @default(0) @map("handoff_depth") // max 3
+  status          HandoffStatus @default(PENDING)
+  inputContext     String?       @map("input_context") @db.Text
+  prompt          String        @db.Text
+  response        String?       @db.Text
+  confidenceScore Decimal?      @map("confidence_score") @db.Decimal(3, 2)
+  tokensUsed      Int           @default(0) @map("tokens_used")
+  latencyMs       Int?          @map("latency_ms")
+  interactionId   String?       @map("interaction_id") // FK to AIInteraction for audit
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  session AgentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("agent_handoffs")
+}
+
+enum HandoffStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum EscalationLevel {
+  NONE
+  FLAGGED
+  ESCALATED
 }

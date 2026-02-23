@@ -63,7 +63,8 @@ export type AgentType =
   | 'investment_management'
   | 'compliance'
   | 'client_support'
-  | 'marketing';
+  | 'marketing'
+  | 'tax_planning';
 
 export interface AIAgentRequest {
   agentType: AgentType;
@@ -80,6 +81,56 @@ export interface AIAgentResponse {
   latencyMs: number;
   complianceFlag: boolean;
   metadata?: Record<string, any>;
+}
+
+// ============================================
+// ORCHESTRATION TYPES
+// ============================================
+
+export interface OrchestratedRequest {
+  prompt: string;
+  clientId?: string;
+  context?: Record<string, any>;
+  forceAgentType?: AgentType;
+  userId?: string;
+}
+
+export interface OrchestratedResponse {
+  sessionId: string;
+  response: string;
+  classifiedIntents: ClassificationResult;
+  agentResults: AgentResult[];
+  confidenceScore: number;
+  escalationLevel: 'NONE' | 'FLAGGED' | 'ESCALATED';
+  totalTokens: number;
+  latencyMs: number;
+  metadata?: Record<string, any>;
+}
+
+export interface ClassificationResult {
+  agents: AgentType[];
+  reasoning: string;
+  isMultiAgent: boolean;
+}
+
+export interface AgentResult {
+  agentType: AgentType;
+  response: string;
+  confidenceScore: number;
+  tokensUsed: number;
+  latencyMs: number;
+  handoffId: string;
+  complianceFlag: boolean;
+}
+
+export interface HandoffSummary {
+  id: string;
+  fromAgent: string | null;
+  toAgent: string;
+  status: string;
+  confidenceScore: number | null;
+  tokensUsed: number;
+  latencyMs: number | null;
 }
 
 /** Safely extract a single string from req.query */

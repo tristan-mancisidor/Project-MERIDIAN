@@ -134,6 +134,7 @@ export function addComplianceDisclaimer(content: string, agentType: string): str
     compliance: '',
     client_support: '',
     marketing: '\n\n---\n*Meridian Wealth Advisors is a registered investment adviser. Registration does not imply any level of skill or training. For more information, please see our Form ADV Part 2A.*',
+    tax_planning: '\n\n---\n*This tax analysis is for informational purposes only and does not constitute tax advice. Tax laws are complex and subject to change. Please consult with a qualified tax professional before implementing any tax strategies.*',
   };
 
   return content + (disclaimers[agentType] || '');
