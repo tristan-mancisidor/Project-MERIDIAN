@@ -1,172 +1,41 @@
-# Meridian Wealth Advisors
+# Project MERIDIAN
 
-An AI-powered Registered Investment Advisor (RIA) platform built as a fiduciary-first organization. Meridian combines luxury-tier financial advisory services with AI agent orchestration, compliance automation, and a full-featured client portal.
-
-## Project Overview
-
-Meridian Wealth Advisors is a full-stack financial advisory platform featuring:
-
-- **Marketing Website** — 8-page responsive site covering services, pricing, resources, and regulatory disclosures
-- **Client Portal** — Authenticated dashboard with portfolio tracking, financial planning, document management, and secure messaging
-- **Backend API** — RESTful API with 68+ endpoints, JWT authentication, role-based access control, and comprehensive audit logging
-- **AI Agent System** — 5 specialized AI agents (Financial Planning, Investment Management, Compliance Review, Client Support, Marketing) with built-in compliance gates
-- **Compliance Engine** — SEC/FINRA-aligned content scanning, suitability checks, and automated audit trails
-
-## Architecture
-
-```
-meridian-wealth-advisors/
-├── website/              # Marketing site (HTML/CSS/JS)
-│   ├── pages/            # Home, About, Services, Pricing, How It Works, Resources, Contact, Disclosures
-│   └── assets/           # Design system (variables.css), styles, scripts
-├── client-portal/        # Authenticated client portal (HTML/CSS/JS)
-│   ├── login/            # Authentication pages
-│   ├── dashboard/        # Portfolio overview, goals, activity feed
-│   ├── portfolio/        # Accounts, holdings, allocation, transactions
-│   ├── financial-plan/   # Plans, projections, goal tracking
-│   ├── documents/        # Document vault with upload/download
-│   ├── communication/    # Secure client-advisor messaging
-│   ├── settings/         # Profile and preferences
-│   └── assets/           # Shared modules (API client, auth, components)
-├── backend/              # Express/TypeScript API server
-│   ├── src/
-│   │   ├── routes/       # Auth, Clients, Investments, Documents, Messages, Tasks, Admin, AI, Outreach
-│   │   ├── services/     # AI agents, compliance, agent memory, outreach triggers/messages, scheduler
-│   │   ├── middleware/    # JWT auth, rate limiting, validation, error handling
-│   │   └── config/       # Environment, database connection
-│   └── prisma/           # Schema (22 models), migrations, seed data
-├── agent-prompts/        # AI agent system prompts and personas
-├── compliance-docs/      # Regulatory templates (Form ADV, Form CRS, Privacy Policy)
-├── integrations/         # Custodian integrations (Schwab, Fidelity, Orion)
-└── config/               # Project configuration
-```
+A full-stack SEC-registered RIA (Registered Investment Advisor) platform that pairs luxury-tier wealth management with AI agent orchestration — five specialized agents working under compliance gates, persistent memory, and proactive client outreach, all built to fiduciary standards.
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | HTML5, CSS3 (custom properties), Vanilla JavaScript (ES Modules) |
 | Backend | Node.js, Express, TypeScript |
-| Database | PostgreSQL 16 with Prisma ORM |
-| AI | Anthropic Claude API (claude-sonnet-4-5-20250929) |
+| Database | PostgreSQL 16, Prisma ORM (22 models) |
+| AI | Anthropic Claude API, multi-agent orchestration |
 | Auth | JWT (access + refresh tokens), bcrypt |
-| File Storage | Multer (local disk, 25MB limit) |
-| Security | Helmet, CORS, rate limiting, Zod validation |
+| Frontend | HTML5, CSS3 (custom properties), Vanilla JS (ES Modules) |
 | Infrastructure | Docker Compose (PostgreSQL + pgAdmin + API) |
+| Security | Helmet, CORS, rate limiting, Zod validation |
 | Logging | Winston |
 
-## Getting Started
+## Key Features
 
-### Prerequisites
+- **Multi-agent orchestration** — Five AI agents (Financial Planning, Investment Management, Compliance Review, Client Support, Marketing) coordinated through a central orchestrator with pre- and post-response compliance gates
+- **Agent memory layer** — Persistent context across client interactions, with memory extraction via Claude Haiku and token-budgeted context building
+- **Proactive client outreach** — Scheduled trigger detection (portfolio drift, goal off-track, milestones, review due, life events, market events) with AI-drafted messages and advisor approval workflow
+- **68+ API endpoints** — RESTful backend covering auth, clients, investments, financial plans, documents, messaging, tasks, admin, AI, and outreach
+- **Client portal** — Authenticated dashboard with portfolio tracking, financial planning, document vault, and secure advisor messaging
+- **Marketing website** — 8-page responsive site with luxury navy/gold design system
+- **Compliance engine** — SEC/FINRA-aligned content scanning, suitability checks, automated audit trails, and human oversight gates on all client-facing AI actions
+- **Custodian integration stubs** — Schwab, Fidelity, and Orion integration scaffolding
 
-- Node.js 18+
-- Docker and Docker Compose
-- npm
+## Architecture Overview
 
-### Setup
+The platform is organized into three main surfaces: a marketing website, an authenticated client portal, and an Express/TypeScript backend API. The backend sits on PostgreSQL (via Prisma) with 22 models spanning the full RIA domain — clients, investments, financial plans, documents, messaging, compliance, and outreach. Five specialized AI agents handle distinct advisory functions and are coordinated through a central orchestrator that enforces compliance checks before and after every AI response. An agent memory system gives each agent persistent context across interactions, while a proactive outreach system runs on a scheduler to detect triggers (portfolio drift, life events, approaching goals) and draft personalized messages that enter a pending-review queue for advisor approval. The entire system is containerized with Docker Compose.
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/tristan-mancisidor/meridian-wealth-advisors.git
-   cd meridian-wealth-advisors
-   ```
+## Status
 
-2. **Start the database**
-   ```bash
-   cd backend
-   docker-compose up -d postgres pgadmin
-   ```
+**Retired / Archived** (February 2026)
 
-3. **Install dependencies and set up the database**
-   ```bash
-   npm install
-   npx prisma generate
-   npx prisma migrate dev
-   ```
+Development through Phases 1–4.2 is complete and the codebase is well-documented and versioned. Retired after concluding that solo development of an SEC-compliant RIA is impractical as a hobbyist. The project could be revived with a team or capital.
 
-4. **Seed test data**
-   ```bash
-   npm run db:seed
-   ```
+## Background
 
-5. **Start the API server**
-   ```bash
-   npm run dev
-   ```
-   The API runs at `http://localhost:3001`.
-
-6. **Serve the frontend**
-
-   Open the website or client portal HTML files with any local server (e.g., VS Code Live Server).
-
-### Test Accounts
-
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@meridianwealth.com | Admin2024! |
-| Advisor | james.chen@meridianwealth.com | Advisor2024! |
-| Client (Premier) | michael.thompson@email.com | Client2024! |
-| Client (Elite) | sarah.kim@email.com | Client2024! |
-| Client (Essential) | robert.martinez@email.com | Client2024! |
-
-## API Endpoints
-
-| Module | Base Path | Description |
-|--------|-----------|-------------|
-| Auth | `/api/auth` | Login, register, refresh tokens, change password |
-| Clients | `/api/clients` | Client profiles, financial data, dashboard |
-| Investments | `/api/investments` | Accounts, holdings, transactions, portfolio analysis |
-| Financial Plans | `/api/financial-plans` | Plans, projections, goals |
-| Documents | `/api/documents` | Upload, download, metadata management |
-| Messages | `/api/messages` | Conversations, messaging, unread counts |
-| Tasks | `/api/tasks` | Action items, meetings, notifications |
-| Admin | `/api/admin` | Dashboard, user management, audit logs, compliance |
-| AI | `/api/ai` | AI agent invocation, agent listing |
-| Outreach | `/api/outreach` | Proactive outreach messages, triggers, rules, scheduler |
-| Health | `/api/health` | Server health check |
-
-## AI Agents
-
-Five specialized AI agents with compliance gates:
-
-1. **Financial Planning Assistant** — Retirement analysis, asset allocation, plan creation
-2. **Investment Management Assistant** — Portfolio analysis, rebalancing, tax-loss harvesting
-3. **Compliance Review Assistant** — SEC/FINRA compliance checking, suitability verification
-4. **Client Support Assistant** — Account questions, financial education, portal guidance
-5. **Marketing Content Assistant** — Educational content, newsletters, client communications
-
-All AI responses pass through pre- and post-response compliance checks that scan for prohibited language, suitability issues, and sensitive data exposure.
-
-## Database Schema
-
-22 Prisma models covering the full RIA domain:
-
-**Core:** User, Client, ClientProfile
-**Investments:** Account, Holding, Transaction, FeeSchedule
-**Planning:** FinancialPlan, Goal
-**Communication:** Conversation, Message, Notification
-**Operations:** Task, Meeting, Document
-**Compliance:** AuditLog, ComplianceCheck, AIInteraction
-**AI Memory:** AgentMemory
-**Outreach:** OutreachRule, OutreachTrigger, OutreachMessage
-
-## Service Tiers
-
-| Tier | AUM Fee | Minimum |
-|------|---------|---------|
-| Essential | 0.75% | $250K |
-| Premier | 0.60% | $500K |
-| Elite | 0.45% | $1M |
-| Planning Only | Flat fee | N/A |
-
-## Development Phases
-
-- **Phase 1** (Complete) — Marketing website with 8 pages, design system, responsive layout
-- **Phase 2** (Complete) — Backend API, database schema, authentication, AI agents, Docker infrastructure
-- **Phase 3** (Complete) — Client portal integration, live dashboard, AI chat widget, document vault, messaging
-- **Phase 4.1** (Complete) — Agent Memory Layer: persistent AI context across interactions, memory extraction via Claude Haiku, enriched context building with token budgets
-- **Phase 4.2** (Complete) — Proactive Client Outreach System: scheduled trigger detection (portfolio drift, goal off-track, account milestones, review due, life events, market events), AI-drafted personalized messages, advisor review/approve workflow, full SEC audit trail
-
-## License
-
-Proprietary. All rights reserved.
+I built Meridian to explore what a fiduciary-first, AI-native wealth management firm could look like — from regulatory compliance and multi-agent orchestration down to the client portal experience. It grew across five development phases into a comprehensive platform, and while it's no longer actively developed, it represents the most ambitious full-stack system I've built solo.
