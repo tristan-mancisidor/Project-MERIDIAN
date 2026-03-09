@@ -35,3 +35,5 @@ logs/
 # API keys (never commit)
 integrations/**/api-keys.*
 config/production.*
+.env
+.env
